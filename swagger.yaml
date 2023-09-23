@@ -1,0 +1,605 @@
+swagger: "2.0"
+info:
+    title: Health Tracker App
+    description: Track Health Parameters
+    version: 1.0.0
+host: localhost:8080
+consumes:
+    - application/json
+produces:
+    - application/json
+schemes:
+    - http
+    - https
+securityDefinitions:
+    OauthSecurity:
+        type: oauth2
+        flow: accessCode
+        authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth'
+        tokenUrl: 'https://www.googleapis.com/oauth2/v4/token'
+        scopes:
+            admin: Admin scope
+            user: User scope
+security:
+    - OauthSecurity:
+          - user
+definitions:
+    error:
+        type: object
+        required:
+            - message
+        properties:
+            code:
+                type: number
+                format: int32
+            message:
+                type: string
+    user:
+        type: object
+        properties:
+            name:
+                type: string
+                readOnly: true
+            first_name:
+                type: string
+                readOnly: true
+    entry:
+        type: object
+        required:
+            - have_blood_pressure
+            - start_time
+            - multi_choices
+            - single_choices
+        properties:
+            id:
+                type: number
+                readOnly: true
+                format: int32
+            user_id:
+                type: number
+                readOnly: true
+                format: int32
+            title:
+                type: string
+            have_blood_pressure:
+                type: boolean
+            systole:
+                type: number
+                format: float
+            diastole:
+                type: number
+                format: float
+            pulse:
+                type: number
+                format: float
+            start_time:
+                type: string
+                format: 'date-time'
+            end_time:
+                type: string
+                format: 'date-time'
+            multi_choices:
+                type: array
+                items:
+                        type: number
+                        format: int64
+            single_choices:
+                type: array
+                items:
+                        type: number
+                        format: int64
+    category:
+        type: object
+        required:
+            - title
+        properties:
+            id:
+                type: number
+                readOnly: true
+                format: int32
+            user_id:
+                type: number
+                readOnly: true
+                format: int32
+            title:
+                type: string
+    category_multi_choice:
+        type: object
+        required:
+            - title
+        properties:
+            id:
+                type: number
+                readOnly: true
+                format: int32
+            category_id:
+                type: number
+                readOnly: true
+                format: int32
+            title:
+                type: string
+            description:
+                type: string
+    category_single_choice_group:
+        type: object
+        required:
+            - title
+        properties:
+            id:
+                type: number
+                readOnly: true
+                format: int32
+            category_id:
+                type: number
+                readOnly: true
+                format: int32
+            title:
+                type: string
+            description:
+                type: string
+    category_single_choice:
+        type: object
+        required:
+            - title
+        properties:
+            id:
+                type: number
+                readOnly: true
+                format: int32
+            group_id:
+                type: number
+                readOnly: true
+                format: int32
+            title:
+                type: string
+            description:
+                type: string
+paths:
+    /login:
+        get:
+            summary: login through oauth2 server
+            tags:
+                - login
+            security: [ ]
+            responses:
+                '200':
+                    description: login
+                    schema:
+                        properties:
+                            access_token:
+                                type: string
+                                format: string
+                default:
+                    description: error
+                    schema:
+                        $ref: "#/definitions/error"
+    /oidc_callback:
+        get:
+            summary: return access_token
+            tags:
+                - login
+            security: [ ]
+            responses:
+                '200':
+                    description: login
+                    schema:
+                        properties:
+                            access_token:
+                                type: string
+                                format: string
+                default:
+                    description: error
+                    schema:
+                        $ref: "#/definitions/error"
+    /entries/:
+        get:
+            tags:
+                - entry
+            parameters:
+                -   name: first
+                    in: query
+                    type: integer
+                    format: int32
+                -   name: limit
+                    in: query
+                    type: integer
+                    format: int32
+                    default: 20
+            responses:
+                200:
+                    description: List of entries
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/entry'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /user/:
+        get:
+            tags:
+                - login
+            responses:
+                200:
+                    description: User info
+                    schema:
+                        $ref: '#/definitions/user'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        post:
+            tags:
+                - entry
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/entry'
+            responses:
+                201:
+                    description: Created
+                    schema:
+                        $ref: '#/definitions/entry'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /entries/{id}:
+        parameters:
+            - type: integer
+              format: int64
+              name: id
+              in: path
+              required: true
+        put:
+            tags:
+                - entry
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/entry'
+            responses:
+                200:
+                    description: OK
+                    schema:
+                        $ref: '#/definitions/entry'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        delete:
+            tags:
+                - entry
+            responses:
+                204:
+                    description: Deleted
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /category/:
+        get:
+            tags:
+                - category
+            parameters:
+                -   name: first
+                    in: query
+                    type: integer
+                    format: int32
+                    default: 0
+                -   name: limit
+                    in: query
+                    type: integer
+                    format: int32
+            responses:
+                200:
+                    description: List of categories
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/category'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        post:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category'
+            responses:
+                201:
+                    description: Created
+                    schema:
+                        $ref: '#/definitions/category'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /category/{id}:
+        parameters:
+            - type: integer
+              format: int64
+              name: id
+              in: path
+              required: true
+        put:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category'
+            responses:
+                200:
+                    description: OK
+                    schema:
+                        $ref: '#/definitions/category'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        delete:
+            tags:
+                - category
+            responses:
+                204:
+                    description: Deleted
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /category/{category_id}/multi_choice/:
+        parameters:
+            - type: integer
+              format: int64
+              name: category_id
+              in: path
+              required: true
+        get:
+            tags:
+                - category
+            parameters:
+                -   name: first
+                    in: query
+                    type: integer
+                    format: int32
+                    default: 0
+                -   name: limit
+                    in: query
+                    type: integer
+                    format: int32
+            responses:
+                200:
+                    description: List of multi choices
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/category_multi_choice'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        post:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category_multi_choice'
+            responses:
+                201:
+                    description: Created
+                    schema:
+                        $ref: '#/definitions/category_multi_choice'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /multi_choice/{id}:
+        parameters:
+            - type: integer
+              format: int64
+              name: id
+              in: path
+              required: true
+        put:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category_multi_choice'
+            responses:
+                200:
+                    description: OK
+                    schema:
+                        $ref: '#/definitions/category_multi_choice'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        delete:
+            tags:
+                - category
+            responses:
+                204:
+                    description: Deleted
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /category/{category_id}/single_choice_group/:
+        parameters:
+            - type: integer
+              format: int64
+              name: category_id
+              in: path
+              required: true
+        get:
+            tags:
+                - category
+            parameters:
+                -   name: first
+                    in: query
+                    type: integer
+                    format: int32
+                    default: 0
+                -   name: limit
+                    in: query
+                    type: integer
+                    format: int32
+            responses:
+                200:
+                    description: List of single choice groups
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/category_single_choice_group'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        post:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category_single_choice_group'
+            responses:
+                201:
+                    description: Created
+                    schema:
+                        $ref: '#/definitions/category_single_choice_group'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /single_choice_group/{id}:
+        parameters:
+            - type: integer
+              format: int64
+              name: id
+              in: path
+              required: true
+        put:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category_single_choice_group'
+            responses:
+                200:
+                    description: OK
+                    schema:
+                        $ref: '#/definitions/category_single_choice_group'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        delete:
+            tags:
+                - category
+            responses:
+                204:
+                    description: Deleted
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /single_choice_group/{group_id}/single_choice/:
+        parameters:
+            - type: integer
+              format: int64
+              name: group_id
+              in: path
+              required: true
+        get:
+            tags:
+                - category
+            parameters:
+                -   name: first
+                    in: query
+                    type: integer
+                    format: int32
+                    default: 0
+                -   name: limit
+                    in: query
+                    type: integer
+                    format: int32
+            responses:
+                200:
+                    description: List of single choices
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/category_single_choice'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        post:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category_single_choice'
+            responses:
+                201:
+                    description: Created
+                    schema:
+                        $ref: '#/definitions/category_single_choice'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+    /single_choice/{id}:
+        parameters:
+            - type: integer
+              format: int64
+              name: id
+              in: path
+              required: true
+        put:
+            tags:
+                - category
+            parameters:
+                -   name: body
+                    in: body
+                    schema:
+                        $ref: '#/definitions/category_single_choice'
+            responses:
+                200:
+                    description: OK
+                    schema:
+                        $ref: '#/definitions/category_single_choice'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+        delete:
+            tags:
+                - category
+            responses:
+                204:
+                    description: Deleted
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
+
