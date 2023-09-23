@@ -1,9 +1,19 @@
 // This file is safe to edit. Once it exists it will not be overwritten
 
+/*
+ * SPDX-License-Identifier: MPL-2.0
+ *   Copyright (c) 2023 Philipp Le <philipp@philipple.de>.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 package restapi
 
 import (
+	"context"
 	"crypto/tls"
+	"hta_backend_2/schemas"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -24,6 +34,21 @@ func configureFlags(api *operations.HtaAPI) {
 }
 
 func configureAPI(api *operations.HtaAPI) http.Handler {
+	db, db_err := schemas.OpenDb(GetEnvOrPanic("DB"))
+	if db_err != nil {
+		panic(db_err)
+	}
+
+	auth, auth_err := AuthSetup(
+		db,
+		GetEnvOrPanic("OIDC_ISSUER"),
+		GetEnvOrPanic("OIDC_CLIENT_ID"),
+		GetEnvOrPanic("OIDC_CLIENT_SECRET"),
+	)
+	if auth_err != nil {
+		panic(auth_err)
+	}
+
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -41,10 +66,24 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	if api.OauthSecurityAuth == nil {
-		api.OauthSecurityAuth = func(token string, scopes []string) (*models.User, error) {
-			return nil, errors.NotImplemented("oauth2 bearer auth (OauthSecurity) has not yet been implemented")
+	api.BearerTokenAuth = func(token string) (*models.User, error) {
+		user, err := AuthGetUser(context.Background(), &auth, token)
+		principal := models.User{
+			ID:        int32(user.ID),
+			Name:      user.Name,
+			FirstName: user.FirstName,
 		}
+		return &principal, err
+	}
+
+	api.OauthSecurityAuth = func(token string, scopes []string) (*models.User, error) {
+		user, err := AuthGetUser(context.Background(), &auth, token)
+		principal := models.User{
+			ID:        int32(user.ID),
+			Name:      user.Name,
+			FirstName: user.FirstName,
+		}
+		return &principal, err
 	}
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()
@@ -98,26 +137,20 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			return middleware.NotImplemented("operation entry.GetEntries has not yet been implemented")
 		})
 	}
-	if api.LoginGetLoginHandler == nil {
-		api.LoginGetLoginHandler = login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
-			return middleware.NotImplemented("operation login.GetLogin has not yet been implemented")
-		})
-	}
-	if api.LoginGetOidcCallbackHandler == nil {
-		api.LoginGetOidcCallbackHandler = login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
-			return middleware.NotImplemented("operation login.GetOidcCallback has not yet been implemented")
-		})
-	}
+	api.LoginGetLoginHandler = login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
+		return AuthLogin(&auth, params.HTTPRequest)
+	})
+	api.LoginGetOidcCallbackHandler = login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
+		return AuthCallback(&auth, params.HTTPRequest)
+	})
 	if api.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
 		api.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler = category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
 		})
 	}
-	if api.LoginGetUserHandler == nil {
-		api.LoginGetUserHandler = login.GetUserHandlerFunc(func(params login.GetUserParams, principal *models.User) middleware.Responder {
-			return middleware.NotImplemented("operation login.GetUser has not yet been implemented")
-		})
-	}
+	api.LoginGetUserHandler = login.GetUserHandlerFunc(func(params login.GetUserParams, principal *models.User) middleware.Responder {
+		return login.NewGetUserOK().WithPayload(principal)
+	})
 	if api.CategoryPostCategoryHandler == nil {
 		api.CategoryPostCategoryHandler = category.PostCategoryHandlerFunc(func(params category.PostCategoryParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostCategory has not yet been implemented")

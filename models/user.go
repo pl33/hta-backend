@@ -23,6 +23,10 @@ type User struct {
 	// Read Only: true
 	FirstName string `json:"first_name,omitempty"`
 
+	// id
+	// Read Only: true
+	ID int32 `json:"id,omitempty"`
+
 	// name
 	// Read Only: true
 	Name string `json:"name,omitempty"`
@@ -41,6 +45,10 @@ func (m *User) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateID(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateName(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -54,6 +62,15 @@ func (m *User) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 func (m *User) contextValidateFirstName(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := validate.ReadOnly(ctx, "first_name", "body", string(m.FirstName)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "id", "body", int32(m.ID)); err != nil {
 		return err
 	}
 

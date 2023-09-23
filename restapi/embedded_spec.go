@@ -928,6 +928,11 @@ func init() {
           "type": "string",
           "readOnly": true
         },
+        "id": {
+          "type": "number",
+          "format": "int32",
+          "readOnly": true
+        },
         "name": {
           "type": "string",
           "readOnly": true
@@ -936,21 +941,30 @@ func init() {
     }
   },
   "securityDefinitions": {
+    "BearerToken": {
+      "type": "apiKey",
+      "name": "x-token",
+      "in": "header"
+    },
     "OauthSecurity": {
       "type": "oauth2",
       "flow": "accessCode",
-      "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
-      "tokenUrl": "https://www.googleapis.com/oauth2/v4/token",
+      "authorizationUrl": "https://auth.philipple.de/auth/realms/Testing/protocol/openid-connect/auth",
+      "tokenUrl": "https://auth.philipple.de/auth/realms/Testing/protocol/openid-connect/token",
       "scopes": {
         "admin": "Admin scope",
+        "openid": "OpenID Connect",
         "user": "User scope"
       }
     }
   },
   "security": [
     {
+      "BearerToken": []
+    },
+    {
       "OauthSecurity": [
-        "user"
+        "openid"
       ]
     }
   ]
@@ -1866,6 +1880,11 @@ func init() {
           "type": "string",
           "readOnly": true
         },
+        "id": {
+          "type": "number",
+          "format": "int32",
+          "readOnly": true
+        },
         "name": {
           "type": "string",
           "readOnly": true
@@ -1874,21 +1893,30 @@ func init() {
     }
   },
   "securityDefinitions": {
+    "BearerToken": {
+      "type": "apiKey",
+      "name": "x-token",
+      "in": "header"
+    },
     "OauthSecurity": {
       "type": "oauth2",
       "flow": "accessCode",
-      "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
-      "tokenUrl": "https://www.googleapis.com/oauth2/v4/token",
+      "authorizationUrl": "https://auth.philipple.de/auth/realms/Testing/protocol/openid-connect/auth",
+      "tokenUrl": "https://auth.philipple.de/auth/realms/Testing/protocol/openid-connect/token",
       "scopes": {
         "admin": "Admin scope",
+        "openid": "OpenID Connect",
         "user": "User scope"
       }
     }
   },
   "security": [
     {
+      "BearerToken": []
+    },
+    {
       "OauthSecurity": [
-        "user"
+        "openid"
       ]
     }
   ]

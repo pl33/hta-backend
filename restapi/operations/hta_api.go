@@ -117,6 +117,10 @@ func NewHtaAPI(spec *loads.Document) *HtaAPI {
 			return middleware.NotImplemented("operation category.PutSingleChoiceID has not yet been implemented")
 		}),
 
+		// Applies when the "x-token" header is set
+		BearerTokenAuth: func(token string) (*models.User, error) {
+			return nil, errors.NotImplemented("api key auth (BearerToken) x-token from header param [x-token] has not yet been implemented")
+		},
 		OauthSecurityAuth: func(token string, scopes []string) (*models.User, error) {
 			return nil, errors.NotImplemented("oauth2 bearer auth (OauthSecurity) has not yet been implemented")
 		},
@@ -157,6 +161,10 @@ type HtaAPI struct {
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
+
+	// BearerTokenAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key x-token provided in the header
+	BearerTokenAuth func(string) (*models.User, error)
 
 	// OauthSecurityAuth registers a function that takes an access token and a collection of required scopes and returns a principal
 	// it performs authentication based on an oauth2 bearer token provided in the request
@@ -288,6 +296,9 @@ func (o *HtaAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.BearerTokenAuth == nil {
+		unregistered = append(unregistered, "XTokenAuth")
+	}
 	if o.OauthSecurityAuth == nil {
 		unregistered = append(unregistered, "OauthSecurityAuth")
 	}
@@ -379,6 +390,12 @@ func (o *HtaAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[s
 	result := make(map[string]runtime.Authenticator)
 	for name := range schemes {
 		switch name {
+		case "BearerToken":
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
+				return o.BearerTokenAuth(token)
+			})
+
 		case "OauthSecurity":
 			result[name] = o.BearerAuthenticator(name, func(token string, scopes []string) (interface{}, error) {
 				return o.OauthSecurityAuth(token, scopes)
