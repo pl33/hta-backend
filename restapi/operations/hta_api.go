@@ -95,11 +95,11 @@ func NewHtaAPI(spec *loads.Document) *HtaAPI {
 		CategoryPostCategoryCategoryIDSingleChoiceGroupHandler: category.PostCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.PostCategoryCategoryIDSingleChoiceGroupParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
 		}),
+		EntryPostEntriesHandler: entry.PostEntriesHandlerFunc(func(params entry.PostEntriesParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation entry.PostEntries has not yet been implemented")
+		}),
 		CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler: category.PostSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.PostSingleChoiceGroupGroupIDSingleChoiceParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
-		}),
-		EntryPostUserHandler: entry.PostUserHandlerFunc(func(params entry.PostUserParams, principal *models.User) middleware.Responder {
-			return middleware.NotImplemented("operation entry.PostUser has not yet been implemented")
 		}),
 		CategoryPutCategoryIDHandler: category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutCategoryID has not yet been implemented")
@@ -205,10 +205,10 @@ type HtaAPI struct {
 	CategoryPostCategoryCategoryIDMultiChoiceHandler category.PostCategoryCategoryIDMultiChoiceHandler
 	// CategoryPostCategoryCategoryIDSingleChoiceGroupHandler sets the operation handler for the post category category ID single choice group operation
 	CategoryPostCategoryCategoryIDSingleChoiceGroupHandler category.PostCategoryCategoryIDSingleChoiceGroupHandler
+	// EntryPostEntriesHandler sets the operation handler for the post entries operation
+	EntryPostEntriesHandler entry.PostEntriesHandler
 	// CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler sets the operation handler for the post single choice group group ID single choice operation
 	CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler category.PostSingleChoiceGroupGroupIDSingleChoiceHandler
-	// EntryPostUserHandler sets the operation handler for the post user operation
-	EntryPostUserHandler entry.PostUserHandler
 	// CategoryPutCategoryIDHandler sets the operation handler for the put category ID operation
 	CategoryPutCategoryIDHandler category.PutCategoryIDHandler
 	// EntryPutEntriesIDHandler sets the operation handler for the put entries ID operation
@@ -351,11 +351,11 @@ func (o *HtaAPI) Validate() error {
 	if o.CategoryPostCategoryCategoryIDSingleChoiceGroupHandler == nil {
 		unregistered = append(unregistered, "category.PostCategoryCategoryIDSingleChoiceGroupHandler")
 	}
+	if o.EntryPostEntriesHandler == nil {
+		unregistered = append(unregistered, "entry.PostEntriesHandler")
+	}
 	if o.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
 		unregistered = append(unregistered, "category.PostSingleChoiceGroupGroupIDSingleChoiceHandler")
-	}
-	if o.EntryPostUserHandler == nil {
-		unregistered = append(unregistered, "entry.PostUserHandler")
 	}
 	if o.CategoryPutCategoryIDHandler == nil {
 		unregistered = append(unregistered, "category.PutCategoryIDHandler")
@@ -543,11 +543,11 @@ func (o *HtaAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/single_choice_group/{group_id}/single_choice"] = category.NewPostSingleChoiceGroupGroupIDSingleChoice(o.context, o.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler)
+	o.handlers["POST"]["/entries"] = entry.NewPostEntries(o.context, o.EntryPostEntriesHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/user"] = entry.NewPostUser(o.context, o.EntryPostUserHandler)
+	o.handlers["POST"]["/single_choice_group/{group_id}/single_choice"] = category.NewPostSingleChoiceGroupGroupIDSingleChoice(o.context, o.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

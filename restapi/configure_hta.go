@@ -13,6 +13,7 @@ package restapi
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"hta_backend_2/schemas"
 	"net/http"
 
@@ -28,6 +29,15 @@ import (
 )
 
 //go:generate swagger generate server --target ../../hta_backend_2 --name Hta --spec ../swagger.yaml --principal models.User
+
+func errorResponder(code int, err error) middleware.Responder {
+	msg := err.Error()
+	responder := middleware.Error(code, models.Error{
+		Code:    int32(code),
+		Message: &msg,
+	})
+	return responder
+}
 
 func configureFlags(api *operations.HtaAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -97,11 +107,23 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			return middleware.NotImplemented("operation category.DeleteCategoryID has not yet been implemented")
 		})
 	}
-	if api.EntryDeleteEntriesIDHandler == nil {
-		api.EntryDeleteEntriesIDHandler = entry.DeleteEntriesIDHandlerFunc(func(params entry.DeleteEntriesIDParams, principal *models.User) middleware.Responder {
-			return middleware.NotImplemented("operation entry.DeleteEntriesID has not yet been implemented")
-		})
-	}
+	api.EntryDeleteEntriesIDHandler = entry.DeleteEntriesIDHandlerFunc(func(params entry.DeleteEntriesIDParams, principal *models.User) middleware.Responder {
+		var err error
+		ctx := params.HTTPRequest.Context()
+
+		var ent schemas.HealthEntry
+		ent, err = schemas.DbGetFromId[schemas.HealthEntry](ctx, db, params.ID)
+		if err != nil {
+			return errorResponder(http.StatusInternalServerError, err)
+		}
+
+		err = db.WithContext(ctx).Delete(&ent).Error
+		if err != nil {
+			return errorResponder(http.StatusInternalServerError, err)
+		}
+
+		return entry.NewDeleteEntriesIDNoContent()
+	})
 	if api.CategoryDeleteMultiChoiceIDHandler == nil {
 		api.CategoryDeleteMultiChoiceIDHandler = category.DeleteMultiChoiceIDHandlerFunc(func(params category.DeleteMultiChoiceIDParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.DeleteMultiChoiceID has not yet been implemented")
@@ -132,11 +154,30 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			return middleware.NotImplemented("operation category.GetCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
 		})
 	}
-	if api.EntryGetEntriesHandler == nil {
-		api.EntryGetEntriesHandler = entry.GetEntriesHandlerFunc(func(params entry.GetEntriesParams, principal *models.User) middleware.Responder {
-			return middleware.NotImplemented("operation entry.GetEntries has not yet been implemented")
-		})
-	}
+	api.EntryGetEntriesHandler = entry.GetEntriesHandlerFunc(func(params entry.GetEntriesParams, principal *models.User) middleware.Responder {
+		ctx := params.HTTPRequest.Context()
+
+		user, userErr := schemas.LookupUser(ctx, db, principal.ID)
+		if userErr != nil {
+			return errorResponder(http.StatusInternalServerError, userErr)
+		}
+
+		entries, listErr := user.ListHealthEntries(ctx, db, params.First, params.Limit)
+		if listErr != nil {
+			return errorResponder(http.StatusInternalServerError, listErr)
+		}
+
+		entriesArray := make([]*models.Entry, len(entries))
+		for idx := range entries {
+			item, err := entries[idx].ToModel(ctx, db)
+			if err != nil {
+				return errorResponder(http.StatusInternalServerError, err)
+			}
+			entriesArray[idx] = &item
+		}
+
+		return entry.NewGetEntriesOK().WithPayload(entriesArray)
+	})
 	api.LoginGetLoginHandler = login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
 		return AuthLogin(&auth, params.HTTPRequest)
 	})
@@ -171,21 +212,58 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			return middleware.NotImplemented("operation category.PostSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
 		})
 	}
-	if api.EntryPostUserHandler == nil {
-		api.EntryPostUserHandler = entry.PostUserHandlerFunc(func(params entry.PostUserParams, principal *models.User) middleware.Responder {
-			return middleware.NotImplemented("operation entry.PostUser has not yet been implemented")
-		})
-	}
+	api.EntryPostEntriesHandler = entry.PostEntriesHandlerFunc(func(params entry.PostEntriesParams, principal *models.User) middleware.Responder {
+		ctx := params.HTTPRequest.Context()
+
+		if params.Body == nil {
+			return errorResponder(http.StatusBadRequest, fmt.Errorf("body is missing"))
+		}
+
+		var ent schemas.HealthEntry
+		if err := ent.FromModel(ctx, db, *params.Body); err != nil {
+			return errorResponder(http.StatusBadRequest, err)
+		}
+		ent.SetParentId(uint(principal.ID))
+
+		if err := db.WithContext(ctx).Create(&ent).Error; err != nil {
+			return errorResponder(http.StatusInternalServerError, err)
+		}
+
+		model, _ := ent.ToModel(ctx, db)
+		return entry.NewPostEntriesCreated().WithPayload(&model)
+	})
 	if api.CategoryPutCategoryIDHandler == nil {
 		api.CategoryPutCategoryIDHandler = category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutCategoryID has not yet been implemented")
 		})
 	}
-	if api.EntryPutEntriesIDHandler == nil {
-		api.EntryPutEntriesIDHandler = entry.PutEntriesIDHandlerFunc(func(params entry.PutEntriesIDParams, principal *models.User) middleware.Responder {
-			return middleware.NotImplemented("operation entry.PutEntriesID has not yet been implemented")
-		})
-	}
+	api.EntryPutEntriesIDHandler = entry.PutEntriesIDHandlerFunc(func(params entry.PutEntriesIDParams, principal *models.User) middleware.Responder {
+		var err error
+		ctx := params.HTTPRequest.Context()
+
+		if params.Body == nil {
+			return errorResponder(http.StatusBadRequest, fmt.Errorf("body is missing"))
+		}
+
+		var ent schemas.HealthEntry
+		ent, err = schemas.DbGetFromId[schemas.HealthEntry](ctx, db, params.ID)
+		if err != nil {
+			return errorResponder(http.StatusInternalServerError, err)
+		}
+
+		err = ent.FromModel(ctx, db, *params.Body)
+		if err != nil {
+			return errorResponder(http.StatusBadRequest, err)
+		}
+
+		err = db.WithContext(ctx).Save(&ent).Error
+		if err != nil {
+			return errorResponder(http.StatusInternalServerError, err)
+		}
+
+		model, _ := ent.ToModel(ctx, db)
+		return entry.NewPutEntriesIDOK().WithPayload(&model)
+	})
 	if api.CategoryPutMultiChoiceIDHandler == nil {
 		api.CategoryPutMultiChoiceIDHandler = category.PutMultiChoiceIDHandlerFunc(func(params category.PutMultiChoiceIDParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutMultiChoiceID has not yet been implemented")

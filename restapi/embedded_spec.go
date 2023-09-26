@@ -347,6 +347,34 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "entry"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/entry"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/entry"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/entries/{id}": {
@@ -720,34 +748,6 @@ func init() {
             }
           }
         }
-      },
-      "post": {
-        "tags": [
-          "entry"
-        ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/entry"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/entry"
-            }
-          },
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
       }
     }
   },
@@ -881,6 +881,9 @@ func init() {
           "type": "number",
           "format": "float"
         },
+        "remarks": {
+          "type": "string"
+        },
         "single_choices": {
           "type": "array",
           "items": {
@@ -895,9 +898,6 @@ func init() {
         "systole": {
           "type": "number",
           "format": "float"
-        },
-        "title": {
-          "type": "string"
         },
         "user_id": {
           "type": "number",
@@ -1299,6 +1299,34 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "entry"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/entry"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/entry"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/entries/{id}": {
@@ -1672,34 +1700,6 @@ func init() {
             }
           }
         }
-      },
-      "post": {
-        "tags": [
-          "entry"
-        ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/entry"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/entry"
-            }
-          },
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
       }
     }
   },
@@ -1833,6 +1833,9 @@ func init() {
           "type": "number",
           "format": "float"
         },
+        "remarks": {
+          "type": "string"
+        },
         "single_choices": {
           "type": "array",
           "items": {
@@ -1847,9 +1850,6 @@ func init() {
         "systole": {
           "type": "number",
           "format": "float"
-        },
-        "title": {
-          "type": "string"
         },
         "user_id": {
           "type": "number",

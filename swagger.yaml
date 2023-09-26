@@ -69,7 +69,7 @@ definitions:
                 type: number
                 readOnly: true
                 format: int32
-            title:
+            remarks:
                 type: string
             have_blood_pressure:
                 type: boolean
@@ -201,6 +201,19 @@ paths:
                     description: error
                     schema:
                         $ref: "#/definitions/error"
+    /user/:
+        get:
+            tags:
+                - login
+            responses:
+                200:
+                    description: User info
+                    schema:
+                        $ref: '#/definitions/user'
+                default:
+                    description: Error
+                    schema:
+                        $ref: '#/definitions/error'
     /entries/:
         get:
             tags:
@@ -222,19 +235,6 @@ paths:
                         type: array
                         items:
                             $ref: '#/definitions/entry'
-                default:
-                    description: Error
-                    schema:
-                        $ref: '#/definitions/error'
-    /user/:
-        get:
-            tags:
-                - login
-            responses:
-                200:
-                    description: User info
-                    schema:
-                        $ref: '#/definitions/user'
                 default:
                     description: Error
                     schema:

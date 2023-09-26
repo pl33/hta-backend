@@ -41,6 +41,9 @@ type Entry struct {
 	// pulse
 	Pulse float32 `json:"pulse,omitempty"`
 
+	// remarks
+	Remarks string `json:"remarks,omitempty"`
+
 	// single choices
 	// Required: true
 	SingleChoices []int64 `json:"single_choices"`
@@ -52,9 +55,6 @@ type Entry struct {
 
 	// systole
 	Systole float32 `json:"systole,omitempty"`
-
-	// title
-	Title string `json:"title,omitempty"`
 
 	// user id
 	// Read Only: true
