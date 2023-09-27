@@ -149,6 +149,17 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			},
 		)
 	})
+	api.EntryGetEntriesIDHandler = entry.GetEntriesIDHandlerFunc(func(params entry.GetEntriesIDParams, principal *models.User) middleware.Responder {
+		return GetHandler[models.Entry, schemas.HealthEntry](
+			params.HTTPRequest,
+			db,
+			params.ID,
+			ToModelFunc[models.Entry, *schemas.HealthEntry],
+			func(model *models.Entry) middleware.Responder {
+				return entry.NewGetEntriesIDOK().WithPayload(model)
+			},
+		)
+	})
 	api.LoginGetLoginHandler = login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
 		return AuthLogin(&auth, params.HTTPRequest)
 	})

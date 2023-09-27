@@ -71,17 +71,32 @@ func NewHtaAPI(spec *loads.Document) *HtaAPI {
 		CategoryGetCategoryCategoryIDSingleChoiceGroupHandler: category.GetCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.GetCategoryCategoryIDSingleChoiceGroupParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
 		}),
+		CategoryGetCategoryIDHandler: category.GetCategoryIDHandlerFunc(func(params category.GetCategoryIDParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetCategoryID has not yet been implemented")
+		}),
 		EntryGetEntriesHandler: entry.GetEntriesHandlerFunc(func(params entry.GetEntriesParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.GetEntries has not yet been implemented")
 		}),
+		EntryGetEntriesIDHandler: entry.GetEntriesIDHandlerFunc(func(params entry.GetEntriesIDParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation entry.GetEntriesID has not yet been implemented")
+		}),
 		LoginGetLoginHandler: login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetLogin has not yet been implemented")
+		}),
+		CategoryGetMultiChoiceIDHandler: category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetMultiChoiceID has not yet been implemented")
 		}),
 		LoginGetOidcCallbackHandler: login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetOidcCallback has not yet been implemented")
 		}),
 		CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler: category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
+		}),
+		CategoryGetSingleChoiceGroupIDHandler: category.GetSingleChoiceGroupIDHandlerFunc(func(params category.GetSingleChoiceGroupIDParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetSingleChoiceGroupID has not yet been implemented")
+		}),
+		CategoryGetSingleChoiceIDHandler: category.GetSingleChoiceIDHandlerFunc(func(params category.GetSingleChoiceIDParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetSingleChoiceID has not yet been implemented")
 		}),
 		LoginGetUserHandler: login.GetUserHandlerFunc(func(params login.GetUserParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetUser has not yet been implemented")
@@ -189,14 +204,24 @@ type HtaAPI struct {
 	CategoryGetCategoryCategoryIDMultiChoiceHandler category.GetCategoryCategoryIDMultiChoiceHandler
 	// CategoryGetCategoryCategoryIDSingleChoiceGroupHandler sets the operation handler for the get category category ID single choice group operation
 	CategoryGetCategoryCategoryIDSingleChoiceGroupHandler category.GetCategoryCategoryIDSingleChoiceGroupHandler
+	// CategoryGetCategoryIDHandler sets the operation handler for the get category ID operation
+	CategoryGetCategoryIDHandler category.GetCategoryIDHandler
 	// EntryGetEntriesHandler sets the operation handler for the get entries operation
 	EntryGetEntriesHandler entry.GetEntriesHandler
+	// EntryGetEntriesIDHandler sets the operation handler for the get entries ID operation
+	EntryGetEntriesIDHandler entry.GetEntriesIDHandler
 	// LoginGetLoginHandler sets the operation handler for the get login operation
 	LoginGetLoginHandler login.GetLoginHandler
+	// CategoryGetMultiChoiceIDHandler sets the operation handler for the get multi choice ID operation
+	CategoryGetMultiChoiceIDHandler category.GetMultiChoiceIDHandler
 	// LoginGetOidcCallbackHandler sets the operation handler for the get oidc callback operation
 	LoginGetOidcCallbackHandler login.GetOidcCallbackHandler
 	// CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler sets the operation handler for the get single choice group group ID single choice operation
 	CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler category.GetSingleChoiceGroupGroupIDSingleChoiceHandler
+	// CategoryGetSingleChoiceGroupIDHandler sets the operation handler for the get single choice group ID operation
+	CategoryGetSingleChoiceGroupIDHandler category.GetSingleChoiceGroupIDHandler
+	// CategoryGetSingleChoiceIDHandler sets the operation handler for the get single choice ID operation
+	CategoryGetSingleChoiceIDHandler category.GetSingleChoiceIDHandler
 	// LoginGetUserHandler sets the operation handler for the get user operation
 	LoginGetUserHandler login.GetUserHandler
 	// CategoryPostCategoryHandler sets the operation handler for the post category operation
@@ -327,17 +352,32 @@ func (o *HtaAPI) Validate() error {
 	if o.CategoryGetCategoryCategoryIDSingleChoiceGroupHandler == nil {
 		unregistered = append(unregistered, "category.GetCategoryCategoryIDSingleChoiceGroupHandler")
 	}
+	if o.CategoryGetCategoryIDHandler == nil {
+		unregistered = append(unregistered, "category.GetCategoryIDHandler")
+	}
 	if o.EntryGetEntriesHandler == nil {
 		unregistered = append(unregistered, "entry.GetEntriesHandler")
 	}
+	if o.EntryGetEntriesIDHandler == nil {
+		unregistered = append(unregistered, "entry.GetEntriesIDHandler")
+	}
 	if o.LoginGetLoginHandler == nil {
 		unregistered = append(unregistered, "login.GetLoginHandler")
+	}
+	if o.CategoryGetMultiChoiceIDHandler == nil {
+		unregistered = append(unregistered, "category.GetMultiChoiceIDHandler")
 	}
 	if o.LoginGetOidcCallbackHandler == nil {
 		unregistered = append(unregistered, "login.GetOidcCallbackHandler")
 	}
 	if o.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
 		unregistered = append(unregistered, "category.GetSingleChoiceGroupGroupIDSingleChoiceHandler")
+	}
+	if o.CategoryGetSingleChoiceGroupIDHandler == nil {
+		unregistered = append(unregistered, "category.GetSingleChoiceGroupIDHandler")
+	}
+	if o.CategoryGetSingleChoiceIDHandler == nil {
+		unregistered = append(unregistered, "category.GetSingleChoiceIDHandler")
 	}
 	if o.LoginGetUserHandler == nil {
 		unregistered = append(unregistered, "login.GetUserHandler")
@@ -511,11 +551,23 @@ func (o *HtaAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/category/{id}"] = category.NewGetCategoryID(o.context, o.CategoryGetCategoryIDHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/entries"] = entry.NewGetEntries(o.context, o.EntryGetEntriesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/entries/{id}"] = entry.NewGetEntriesID(o.context, o.EntryGetEntriesIDHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/login"] = login.NewGetLogin(o.context, o.LoginGetLoginHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/multi_choice/{id}"] = category.NewGetMultiChoiceID(o.context, o.CategoryGetMultiChoiceIDHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -524,6 +576,14 @@ func (o *HtaAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/single_choice_group/{group_id}/single_choice"] = category.NewGetSingleChoiceGroupGroupIDSingleChoice(o.context, o.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/single_choice_group/{id}"] = category.NewGetSingleChoiceGroupID(o.context, o.CategoryGetSingleChoiceGroupIDHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/single_choice/{id}"] = category.NewGetSingleChoiceID(o.context, o.CategoryGetSingleChoiceIDHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

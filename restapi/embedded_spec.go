@@ -256,6 +256,25 @@ func init() {
       ]
     },
     "/category/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -378,6 +397,25 @@ func init() {
       }
     },
     "/entries/{id}": {
+      "get": {
+        "tags": [
+          "entry"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entry"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "entry"
@@ -461,6 +499,25 @@ func init() {
       }
     },
     "/multi_choice/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category_multi_choice"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -544,6 +601,25 @@ func init() {
       }
     },
     "/single_choice/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category_single_choice"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -675,6 +751,25 @@ func init() {
       ]
     },
     "/single_choice_group/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category_single_choice_group"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -1208,6 +1303,25 @@ func init() {
       ]
     },
     "/category/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -1330,6 +1444,25 @@ func init() {
       }
     },
     "/entries/{id}": {
+      "get": {
+        "tags": [
+          "entry"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entry"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "entry"
@@ -1413,6 +1546,25 @@ func init() {
       }
     },
     "/multi_choice/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category_multi_choice"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -1496,6 +1648,25 @@ func init() {
       }
     },
     "/single_choice/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category_single_choice"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
@@ -1627,6 +1798,25 @@ func init() {
       ]
     },
     "/single_choice_group/{id}": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/category_single_choice_group"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "category"
