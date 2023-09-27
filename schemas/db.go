@@ -60,12 +60,6 @@ func OpenDb(db_url string) (*gorm.DB, error) {
 	return db, nil
 }
 
-type Convertable[T interface{}] interface {
-	ToModel(ctx context.Context, db *gorm.DB) (T, error)
-	FromModel(ctx context.Context, db *gorm.DB, model T) error
-	SetParentId(id uint)
-}
-
 func DbGetFromId[T interface{}, N int32 | int64 | uint](ctx context.Context, db *gorm.DB, id N) (T, error) {
 	var obj T
 	db.WithContext(ctx).Where("id = ?", uint(id)).First(&obj)

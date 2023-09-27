@@ -13,7 +13,7 @@ package restapi
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
+	"gorm.io/gorm"
 	"hta_backend_2/schemas"
 	"net/http"
 
@@ -29,15 +29,6 @@ import (
 )
 
 //go:generate swagger generate server --target ../../hta_backend_2 --name Hta --spec ../swagger.yaml --principal models.User
-
-func errorResponder(code int, err error) middleware.Responder {
-	msg := err.Error()
-	responder := middleware.Error(code, models.Error{
-		Code:    int32(code),
-		Message: &msg,
-	})
-	return responder
-}
 
 func configureFlags(api *operations.HtaAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -108,21 +99,9 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 		})
 	}
 	api.EntryDeleteEntriesIDHandler = entry.DeleteEntriesIDHandlerFunc(func(params entry.DeleteEntriesIDParams, principal *models.User) middleware.Responder {
-		var err error
-		ctx := params.HTTPRequest.Context()
-
-		var ent schemas.HealthEntry
-		ent, err = schemas.DbGetFromId[schemas.HealthEntry](ctx, db, params.ID)
-		if err != nil {
-			return errorResponder(http.StatusInternalServerError, err)
-		}
-
-		err = db.WithContext(ctx).Delete(&ent).Error
-		if err != nil {
-			return errorResponder(http.StatusInternalServerError, err)
-		}
-
-		return entry.NewDeleteEntriesIDNoContent()
+		return DeleteHandler[schemas.HealthEntry](params.HTTPRequest, db, params.ID, func() middleware.Responder {
+			return entry.NewDeleteEntriesIDNoContent()
+		})
 	})
 	if api.CategoryDeleteMultiChoiceIDHandler == nil {
 		api.CategoryDeleteMultiChoiceIDHandler = category.DeleteMultiChoiceIDHandlerFunc(func(params category.DeleteMultiChoiceIDParams, principal *models.User) middleware.Responder {
@@ -155,28 +134,20 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 		})
 	}
 	api.EntryGetEntriesHandler = entry.GetEntriesHandlerFunc(func(params entry.GetEntriesParams, principal *models.User) middleware.Responder {
-		ctx := params.HTTPRequest.Context()
-
-		user, userErr := schemas.LookupUser(ctx, db, principal.ID)
-		if userErr != nil {
-			return errorResponder(http.StatusInternalServerError, userErr)
-		}
-
-		entries, listErr := user.ListHealthEntries(ctx, db, params.First, params.Limit)
-		if listErr != nil {
-			return errorResponder(http.StatusInternalServerError, listErr)
-		}
-
-		entriesArray := make([]*models.Entry, len(entries))
-		for idx := range entries {
-			item, err := entries[idx].ToModel(ctx, db)
-			if err != nil {
-				return errorResponder(http.StatusInternalServerError, err)
-			}
-			entriesArray[idx] = &item
-		}
-
-		return entry.NewGetEntriesOK().WithPayload(entriesArray)
+		return ListHandler[models.Entry, schemas.HealthEntry](
+			params.HTTPRequest,
+			db,
+			func(ctx context.Context, db *gorm.DB) (schemas.User, error) {
+				return schemas.LookupUser(ctx, db, principal.ID)
+			},
+			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.HealthEntry, error) {
+				return owner.ListHealthEntries(ctx, db, params.First, params.Limit)
+			},
+			ToModelFunc[models.Entry, *schemas.HealthEntry],
+			func(modelList []*models.Entry) middleware.Responder {
+				return entry.NewGetEntriesOK().WithPayload(modelList)
+			},
+		)
 	})
 	api.LoginGetLoginHandler = login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
 		return AuthLogin(&auth, params.HTTPRequest)
@@ -213,24 +184,18 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 		})
 	}
 	api.EntryPostEntriesHandler = entry.PostEntriesHandlerFunc(func(params entry.PostEntriesParams, principal *models.User) middleware.Responder {
-		ctx := params.HTTPRequest.Context()
-
-		if params.Body == nil {
-			return errorResponder(http.StatusBadRequest, fmt.Errorf("body is missing"))
-		}
-
-		var ent schemas.HealthEntry
-		if err := ent.FromModel(ctx, db, *params.Body); err != nil {
-			return errorResponder(http.StatusBadRequest, err)
-		}
-		ent.SetParentId(uint(principal.ID))
-
-		if err := db.WithContext(ctx).Create(&ent).Error; err != nil {
-			return errorResponder(http.StatusInternalServerError, err)
-		}
-
-		model, _ := ent.ToModel(ctx, db)
-		return entry.NewPostEntriesCreated().WithPayload(&model)
+		return PostHandler[models.Entry, schemas.HealthEntry](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			principal.ID,
+			FromModelFunc[models.Entry, *schemas.HealthEntry],
+			SetParentIdFunc[models.Entry, *schemas.HealthEntry],
+			ToModelFunc[models.Entry, *schemas.HealthEntry],
+			func(model *models.Entry) middleware.Responder {
+				return entry.NewPostEntriesCreated().WithPayload(model)
+			},
+		)
 	})
 	if api.CategoryPutCategoryIDHandler == nil {
 		api.CategoryPutCategoryIDHandler = category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *models.User) middleware.Responder {
@@ -238,31 +203,17 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 		})
 	}
 	api.EntryPutEntriesIDHandler = entry.PutEntriesIDHandlerFunc(func(params entry.PutEntriesIDParams, principal *models.User) middleware.Responder {
-		var err error
-		ctx := params.HTTPRequest.Context()
-
-		if params.Body == nil {
-			return errorResponder(http.StatusBadRequest, fmt.Errorf("body is missing"))
-		}
-
-		var ent schemas.HealthEntry
-		ent, err = schemas.DbGetFromId[schemas.HealthEntry](ctx, db, params.ID)
-		if err != nil {
-			return errorResponder(http.StatusInternalServerError, err)
-		}
-
-		err = ent.FromModel(ctx, db, *params.Body)
-		if err != nil {
-			return errorResponder(http.StatusBadRequest, err)
-		}
-
-		err = db.WithContext(ctx).Save(&ent).Error
-		if err != nil {
-			return errorResponder(http.StatusInternalServerError, err)
-		}
-
-		model, _ := ent.ToModel(ctx, db)
-		return entry.NewPutEntriesIDOK().WithPayload(&model)
+		return PutHandler[models.Entry, schemas.HealthEntry](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.ID,
+			FromModelFunc[models.Entry, *schemas.HealthEntry],
+			ToModelFunc[models.Entry, *schemas.HealthEntry],
+			func(model *models.Entry) middleware.Responder {
+				return entry.NewPostEntriesCreated().WithPayload(model)
+			},
+		)
 	})
 	if api.CategoryPutMultiChoiceIDHandler == nil {
 		api.CategoryPutMultiChoiceIDHandler = category.PutMultiChoiceIDHandlerFunc(func(params category.PutMultiChoiceIDParams, principal *models.User) middleware.Responder {
