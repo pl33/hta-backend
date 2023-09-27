@@ -57,7 +57,7 @@ func ListHandler[Model interface{}, Schema interface{}, Parent interface{}](
 
 	parent, parentErr := getParent(ctx, db)
 	if parentErr != nil {
-		return errorResponder(http.StatusInternalServerError, parentErr)
+		return errorResponder(http.StatusNotFound, parentErr)
 	}
 
 	schemaList, schemaErr := listItems(ctx, db, &parent)
@@ -90,7 +90,7 @@ func GetHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 	var schema Schema
 	schema, err = schemas.DbGetFromId[Schema](ctx, db, id)
 	if err != nil {
-		return errorResponder(http.StatusInternalServerError, err)
+		return errorResponder(http.StatusNotFound, err)
 	}
 
 	model, _ := toModelFunc(&schema, ctx, db)
@@ -146,7 +146,7 @@ func PutHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 	var schema Schema
 	schema, err = schemas.DbGetFromId[Schema](ctx, db, id)
 	if err != nil {
-		return errorResponder(http.StatusInternalServerError, err)
+		return errorResponder(http.StatusNotFound, err)
 	}
 
 	err = fromModelFunc(&schema, ctx, db, *body)
@@ -170,7 +170,7 @@ func DeleteHandler[Schema interface{}, N int32 | int64 | uint](r *http.Request, 
 	var schema Schema
 	schema, err = schemas.DbGetFromId[Schema](ctx, db, id)
 	if err != nil {
-		return errorResponder(http.StatusInternalServerError, err)
+		return errorResponder(http.StatusNotFound, err)
 	}
 
 	err = db.WithContext(ctx).Delete(&schema).Error

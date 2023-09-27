@@ -62,11 +62,11 @@ func OpenDb(db_url string) (*gorm.DB, error) {
 
 func DbGetFromId[T interface{}, N int32 | int64 | uint](ctx context.Context, db *gorm.DB, id N) (T, error) {
 	var obj T
-	db.WithContext(ctx).Where("id = ?", uint(id)).First(&obj)
-	if db.Error == nil {
-		return obj, nil
+	res := db.WithContext(ctx).Where("id = ?", uint(id)).First(&obj)
+	if res.Error != nil {
+		return *new(T), res.Error
 	} else {
-		return *new(T), db.Error
+		return obj, nil
 	}
 }
 
