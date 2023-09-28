@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // GetCategoryHandlerFunc turns a function with the right signature into a get category handler
-type GetCategoryHandlerFunc func(GetCategoryParams, *models.User) middleware.Responder
+type GetCategoryHandlerFunc func(GetCategoryParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetCategoryHandlerFunc) Handle(params GetCategoryParams, principal *models.User) middleware.Responder {
+func (fn GetCategoryHandlerFunc) Handle(params GetCategoryParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GetCategoryHandler interface for that can handle valid get category params
 type GetCategoryHandler interface {
-	Handle(GetCategoryParams, *models.User) middleware.Responder
+	Handle(GetCategoryParams, *schemas.User) middleware.Responder
 }
 
 // NewGetCategory creates a new http.Handler for the get category operation
@@ -55,9 +55,9 @@ func (o *GetCategory) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

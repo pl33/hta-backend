@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // DeleteMultiChoiceIDHandlerFunc turns a function with the right signature into a delete multi choice ID handler
-type DeleteMultiChoiceIDHandlerFunc func(DeleteMultiChoiceIDParams, *models.User) middleware.Responder
+type DeleteMultiChoiceIDHandlerFunc func(DeleteMultiChoiceIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteMultiChoiceIDHandlerFunc) Handle(params DeleteMultiChoiceIDParams, principal *models.User) middleware.Responder {
+func (fn DeleteMultiChoiceIDHandlerFunc) Handle(params DeleteMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // DeleteMultiChoiceIDHandler interface for that can handle valid delete multi choice ID params
 type DeleteMultiChoiceIDHandler interface {
-	Handle(DeleteMultiChoiceIDParams, *models.User) middleware.Responder
+	Handle(DeleteMultiChoiceIDParams, *schemas.User) middleware.Responder
 }
 
 // NewDeleteMultiChoiceID creates a new http.Handler for the delete multi choice ID operation
@@ -55,9 +55,9 @@ func (o *DeleteMultiChoiceID) ServeHTTP(rw http.ResponseWriter, r *http.Request)
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

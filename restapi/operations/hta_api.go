@@ -19,10 +19,10 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"hta_backend_2/models"
 	"hta_backend_2/restapi/operations/category"
 	"hta_backend_2/restapi/operations/entry"
 	"hta_backend_2/restapi/operations/login"
+	"hta_backend_2/schemas"
 )
 
 // NewHtaAPI creates a new Hta instance
@@ -47,96 +47,96 @@ func NewHtaAPI(spec *loads.Document) *HtaAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
-		CategoryDeleteCategoryIDHandler: category.DeleteCategoryIDHandlerFunc(func(params category.DeleteCategoryIDParams, principal *models.User) middleware.Responder {
+		CategoryDeleteCategoryIDHandler: category.DeleteCategoryIDHandlerFunc(func(params category.DeleteCategoryIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.DeleteCategoryID has not yet been implemented")
 		}),
-		EntryDeleteEntriesIDHandler: entry.DeleteEntriesIDHandlerFunc(func(params entry.DeleteEntriesIDParams, principal *models.User) middleware.Responder {
+		EntryDeleteEntriesIDHandler: entry.DeleteEntriesIDHandlerFunc(func(params entry.DeleteEntriesIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.DeleteEntriesID has not yet been implemented")
 		}),
-		CategoryDeleteMultiChoiceIDHandler: category.DeleteMultiChoiceIDHandlerFunc(func(params category.DeleteMultiChoiceIDParams, principal *models.User) middleware.Responder {
+		CategoryDeleteMultiChoiceIDHandler: category.DeleteMultiChoiceIDHandlerFunc(func(params category.DeleteMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.DeleteMultiChoiceID has not yet been implemented")
 		}),
-		CategoryDeleteSingleChoiceGroupIDHandler: category.DeleteSingleChoiceGroupIDHandlerFunc(func(params category.DeleteSingleChoiceGroupIDParams, principal *models.User) middleware.Responder {
+		CategoryDeleteSingleChoiceGroupIDHandler: category.DeleteSingleChoiceGroupIDHandlerFunc(func(params category.DeleteSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.DeleteSingleChoiceGroupID has not yet been implemented")
 		}),
-		CategoryDeleteSingleChoiceIDHandler: category.DeleteSingleChoiceIDHandlerFunc(func(params category.DeleteSingleChoiceIDParams, principal *models.User) middleware.Responder {
+		CategoryDeleteSingleChoiceIDHandler: category.DeleteSingleChoiceIDHandlerFunc(func(params category.DeleteSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.DeleteSingleChoiceID has not yet been implemented")
 		}),
-		CategoryGetCategoryHandler: category.GetCategoryHandlerFunc(func(params category.GetCategoryParams, principal *models.User) middleware.Responder {
+		CategoryGetCategoryHandler: category.GetCategoryHandlerFunc(func(params category.GetCategoryParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetCategory has not yet been implemented")
 		}),
-		CategoryGetCategoryCategoryIDMultiChoiceHandler: category.GetCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.GetCategoryCategoryIDMultiChoiceParams, principal *models.User) middleware.Responder {
+		CategoryGetCategoryCategoryIDMultiChoiceHandler: category.GetCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.GetCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetCategoryCategoryIDMultiChoice has not yet been implemented")
 		}),
-		CategoryGetCategoryCategoryIDSingleChoiceGroupHandler: category.GetCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.GetCategoryCategoryIDSingleChoiceGroupParams, principal *models.User) middleware.Responder {
+		CategoryGetCategoryCategoryIDSingleChoiceGroupHandler: category.GetCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.GetCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
 		}),
-		CategoryGetCategoryIDHandler: category.GetCategoryIDHandlerFunc(func(params category.GetCategoryIDParams, principal *models.User) middleware.Responder {
+		CategoryGetCategoryIDHandler: category.GetCategoryIDHandlerFunc(func(params category.GetCategoryIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetCategoryID has not yet been implemented")
 		}),
-		EntryGetEntriesHandler: entry.GetEntriesHandlerFunc(func(params entry.GetEntriesParams, principal *models.User) middleware.Responder {
+		EntryGetEntriesHandler: entry.GetEntriesHandlerFunc(func(params entry.GetEntriesParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.GetEntries has not yet been implemented")
 		}),
-		EntryGetEntriesIDHandler: entry.GetEntriesIDHandlerFunc(func(params entry.GetEntriesIDParams, principal *models.User) middleware.Responder {
+		EntryGetEntriesIDHandler: entry.GetEntriesIDHandlerFunc(func(params entry.GetEntriesIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.GetEntriesID has not yet been implemented")
 		}),
 		LoginGetLoginHandler: login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetLogin has not yet been implemented")
 		}),
-		CategoryGetMultiChoiceIDHandler: category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *models.User) middleware.Responder {
+		CategoryGetMultiChoiceIDHandler: category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetMultiChoiceID has not yet been implemented")
 		}),
 		LoginGetOidcCallbackHandler: login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetOidcCallback has not yet been implemented")
 		}),
-		CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler: category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *models.User) middleware.Responder {
+		CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler: category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
 		}),
-		CategoryGetSingleChoiceGroupIDHandler: category.GetSingleChoiceGroupIDHandlerFunc(func(params category.GetSingleChoiceGroupIDParams, principal *models.User) middleware.Responder {
+		CategoryGetSingleChoiceGroupIDHandler: category.GetSingleChoiceGroupIDHandlerFunc(func(params category.GetSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetSingleChoiceGroupID has not yet been implemented")
 		}),
-		CategoryGetSingleChoiceIDHandler: category.GetSingleChoiceIDHandlerFunc(func(params category.GetSingleChoiceIDParams, principal *models.User) middleware.Responder {
+		CategoryGetSingleChoiceIDHandler: category.GetSingleChoiceIDHandlerFunc(func(params category.GetSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetSingleChoiceID has not yet been implemented")
 		}),
-		LoginGetUserHandler: login.GetUserHandlerFunc(func(params login.GetUserParams, principal *models.User) middleware.Responder {
+		LoginGetUserHandler: login.GetUserHandlerFunc(func(params login.GetUserParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetUser has not yet been implemented")
 		}),
-		CategoryPostCategoryHandler: category.PostCategoryHandlerFunc(func(params category.PostCategoryParams, principal *models.User) middleware.Responder {
+		CategoryPostCategoryHandler: category.PostCategoryHandlerFunc(func(params category.PostCategoryParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostCategory has not yet been implemented")
 		}),
-		CategoryPostCategoryCategoryIDMultiChoiceHandler: category.PostCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.PostCategoryCategoryIDMultiChoiceParams, principal *models.User) middleware.Responder {
+		CategoryPostCategoryCategoryIDMultiChoiceHandler: category.PostCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.PostCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostCategoryCategoryIDMultiChoice has not yet been implemented")
 		}),
-		CategoryPostCategoryCategoryIDSingleChoiceGroupHandler: category.PostCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.PostCategoryCategoryIDSingleChoiceGroupParams, principal *models.User) middleware.Responder {
+		CategoryPostCategoryCategoryIDSingleChoiceGroupHandler: category.PostCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.PostCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
 		}),
-		EntryPostEntriesHandler: entry.PostEntriesHandlerFunc(func(params entry.PostEntriesParams, principal *models.User) middleware.Responder {
+		EntryPostEntriesHandler: entry.PostEntriesHandlerFunc(func(params entry.PostEntriesParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.PostEntries has not yet been implemented")
 		}),
-		CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler: category.PostSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.PostSingleChoiceGroupGroupIDSingleChoiceParams, principal *models.User) middleware.Responder {
+		CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler: category.PostSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.PostSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
 		}),
-		CategoryPutCategoryIDHandler: category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *models.User) middleware.Responder {
+		CategoryPutCategoryIDHandler: category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutCategoryID has not yet been implemented")
 		}),
-		EntryPutEntriesIDHandler: entry.PutEntriesIDHandlerFunc(func(params entry.PutEntriesIDParams, principal *models.User) middleware.Responder {
+		EntryPutEntriesIDHandler: entry.PutEntriesIDHandlerFunc(func(params entry.PutEntriesIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.PutEntriesID has not yet been implemented")
 		}),
-		CategoryPutMultiChoiceIDHandler: category.PutMultiChoiceIDHandlerFunc(func(params category.PutMultiChoiceIDParams, principal *models.User) middleware.Responder {
+		CategoryPutMultiChoiceIDHandler: category.PutMultiChoiceIDHandlerFunc(func(params category.PutMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutMultiChoiceID has not yet been implemented")
 		}),
-		CategoryPutSingleChoiceGroupIDHandler: category.PutSingleChoiceGroupIDHandlerFunc(func(params category.PutSingleChoiceGroupIDParams, principal *models.User) middleware.Responder {
+		CategoryPutSingleChoiceGroupIDHandler: category.PutSingleChoiceGroupIDHandlerFunc(func(params category.PutSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutSingleChoiceGroupID has not yet been implemented")
 		}),
-		CategoryPutSingleChoiceIDHandler: category.PutSingleChoiceIDHandlerFunc(func(params category.PutSingleChoiceIDParams, principal *models.User) middleware.Responder {
+		CategoryPutSingleChoiceIDHandler: category.PutSingleChoiceIDHandlerFunc(func(params category.PutSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutSingleChoiceID has not yet been implemented")
 		}),
 
 		// Applies when the "x-token" header is set
-		BearerTokenAuth: func(token string) (*models.User, error) {
+		BearerTokenAuth: func(token string) (*schemas.User, error) {
 			return nil, errors.NotImplemented("api key auth (BearerToken) x-token from header param [x-token] has not yet been implemented")
 		},
-		OauthSecurityAuth: func(token string, scopes []string) (*models.User, error) {
+		OauthSecurityAuth: func(token string, scopes []string) (*schemas.User, error) {
 			return nil, errors.NotImplemented("oauth2 bearer auth (OauthSecurity) has not yet been implemented")
 		},
 		// default authorizer is authorized meaning no requests are blocked
@@ -179,11 +179,11 @@ type HtaAPI struct {
 
 	// BearerTokenAuth registers a function that takes a token and returns a principal
 	// it performs authentication based on an api key x-token provided in the header
-	BearerTokenAuth func(string) (*models.User, error)
+	BearerTokenAuth func(string) (*schemas.User, error)
 
 	// OauthSecurityAuth registers a function that takes an access token and a collection of required scopes and returns a principal
 	// it performs authentication based on an oauth2 bearer token provided in the request
-	OauthSecurityAuth func(string, []string) (*models.User, error)
+	OauthSecurityAuth func(string, []string) (*schemas.User, error)
 
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer

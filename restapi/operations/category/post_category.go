@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // PostCategoryHandlerFunc turns a function with the right signature into a post category handler
-type PostCategoryHandlerFunc func(PostCategoryParams, *models.User) middleware.Responder
+type PostCategoryHandlerFunc func(PostCategoryParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PostCategoryHandlerFunc) Handle(params PostCategoryParams, principal *models.User) middleware.Responder {
+func (fn PostCategoryHandlerFunc) Handle(params PostCategoryParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PostCategoryHandler interface for that can handle valid post category params
 type PostCategoryHandler interface {
-	Handle(PostCategoryParams, *models.User) middleware.Responder
+	Handle(PostCategoryParams, *schemas.User) middleware.Responder
 }
 
 // NewPostCategory creates a new http.Handler for the post category operation
@@ -55,9 +55,9 @@ func (o *PostCategory) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

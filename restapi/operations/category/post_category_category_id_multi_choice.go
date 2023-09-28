@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // PostCategoryCategoryIDMultiChoiceHandlerFunc turns a function with the right signature into a post category category ID multi choice handler
-type PostCategoryCategoryIDMultiChoiceHandlerFunc func(PostCategoryCategoryIDMultiChoiceParams, *models.User) middleware.Responder
+type PostCategoryCategoryIDMultiChoiceHandlerFunc func(PostCategoryCategoryIDMultiChoiceParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PostCategoryCategoryIDMultiChoiceHandlerFunc) Handle(params PostCategoryCategoryIDMultiChoiceParams, principal *models.User) middleware.Responder {
+func (fn PostCategoryCategoryIDMultiChoiceHandlerFunc) Handle(params PostCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PostCategoryCategoryIDMultiChoiceHandler interface for that can handle valid post category category ID multi choice params
 type PostCategoryCategoryIDMultiChoiceHandler interface {
-	Handle(PostCategoryCategoryIDMultiChoiceParams, *models.User) middleware.Responder
+	Handle(PostCategoryCategoryIDMultiChoiceParams, *schemas.User) middleware.Responder
 }
 
 // NewPostCategoryCategoryIDMultiChoice creates a new http.Handler for the post category category ID multi choice operation
@@ -55,9 +55,9 @@ func (o *PostCategoryCategoryIDMultiChoice) ServeHTTP(rw http.ResponseWriter, r 
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

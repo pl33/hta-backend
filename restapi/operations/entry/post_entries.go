@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // PostEntriesHandlerFunc turns a function with the right signature into a post entries handler
-type PostEntriesHandlerFunc func(PostEntriesParams, *models.User) middleware.Responder
+type PostEntriesHandlerFunc func(PostEntriesParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PostEntriesHandlerFunc) Handle(params PostEntriesParams, principal *models.User) middleware.Responder {
+func (fn PostEntriesHandlerFunc) Handle(params PostEntriesParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PostEntriesHandler interface for that can handle valid post entries params
 type PostEntriesHandler interface {
-	Handle(PostEntriesParams, *models.User) middleware.Responder
+	Handle(PostEntriesParams, *schemas.User) middleware.Responder
 }
 
 // NewPostEntries creates a new http.Handler for the post entries operation
@@ -55,9 +55,9 @@ func (o *PostEntries) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // PutEntriesIDHandlerFunc turns a function with the right signature into a put entries ID handler
-type PutEntriesIDHandlerFunc func(PutEntriesIDParams, *models.User) middleware.Responder
+type PutEntriesIDHandlerFunc func(PutEntriesIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PutEntriesIDHandlerFunc) Handle(params PutEntriesIDParams, principal *models.User) middleware.Responder {
+func (fn PutEntriesIDHandlerFunc) Handle(params PutEntriesIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PutEntriesIDHandler interface for that can handle valid put entries ID params
 type PutEntriesIDHandler interface {
-	Handle(PutEntriesIDParams, *models.User) middleware.Responder
+	Handle(PutEntriesIDParams, *schemas.User) middleware.Responder
 }
 
 // NewPutEntriesID creates a new http.Handler for the put entries ID operation
@@ -55,9 +55,9 @@ func (o *PutEntriesID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

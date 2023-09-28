@@ -36,12 +36,6 @@ type HealthEntry struct {
 	SingleChoices []CategorySingleChoiceItem `gorm:"many2many:entry_single_choices;" json:"single_choices"`
 }
 
-func (owner *User) AddHealthEntry(ctx context.Context, db *gorm.DB, entry *HealthEntry) error {
-	entry.UserID = owner.ID
-	db.WithContext(ctx).Create(entry)
-	return db.Error
-}
-
 func (owner *User) ListHealthEntries(ctx context.Context, db *gorm.DB, first *int32, limit *int32) ([]HealthEntry, error) {
 	var entries []HealthEntry
 
@@ -71,12 +65,8 @@ func (owner *User) ListHealthEntries(ctx context.Context, db *gorm.DB, first *in
 	return entries, nil
 }
 
-func (entry *HealthEntry) authIsWritable(principalId int32) bool {
-	return entry.UserID == uint(principalId)
-}
-
-func (entry *HealthEntry) authIsReadable(principalId int32) bool {
-	return entry.UserID == uint(principalId)
+func (entry HealthEntry) GetOwnerID(context.Context, *gorm.DB) uint {
+	return entry.UserID
 }
 
 func (entry *HealthEntry) ToModel(ctx context.Context, db *gorm.DB) (models.Entry, error) {

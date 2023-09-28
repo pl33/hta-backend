@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // PutCategoryIDHandlerFunc turns a function with the right signature into a put category ID handler
-type PutCategoryIDHandlerFunc func(PutCategoryIDParams, *models.User) middleware.Responder
+type PutCategoryIDHandlerFunc func(PutCategoryIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PutCategoryIDHandlerFunc) Handle(params PutCategoryIDParams, principal *models.User) middleware.Responder {
+func (fn PutCategoryIDHandlerFunc) Handle(params PutCategoryIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PutCategoryIDHandler interface for that can handle valid put category ID params
 type PutCategoryIDHandler interface {
-	Handle(PutCategoryIDParams, *models.User) middleware.Responder
+	Handle(PutCategoryIDParams, *schemas.User) middleware.Responder
 }
 
 // NewPutCategoryID creates a new http.Handler for the put category ID operation
@@ -55,9 +55,9 @@ func (o *PutCategoryID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

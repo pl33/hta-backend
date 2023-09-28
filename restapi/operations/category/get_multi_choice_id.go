@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // GetMultiChoiceIDHandlerFunc turns a function with the right signature into a get multi choice ID handler
-type GetMultiChoiceIDHandlerFunc func(GetMultiChoiceIDParams, *models.User) middleware.Responder
+type GetMultiChoiceIDHandlerFunc func(GetMultiChoiceIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetMultiChoiceIDHandlerFunc) Handle(params GetMultiChoiceIDParams, principal *models.User) middleware.Responder {
+func (fn GetMultiChoiceIDHandlerFunc) Handle(params GetMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GetMultiChoiceIDHandler interface for that can handle valid get multi choice ID params
 type GetMultiChoiceIDHandler interface {
-	Handle(GetMultiChoiceIDParams, *models.User) middleware.Responder
+	Handle(GetMultiChoiceIDParams, *schemas.User) middleware.Responder
 }
 
 // NewGetMultiChoiceID creates a new http.Handler for the get multi choice ID operation
@@ -55,9 +55,9 @@ func (o *GetMultiChoiceID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

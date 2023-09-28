@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // GetSingleChoiceIDHandlerFunc turns a function with the right signature into a get single choice ID handler
-type GetSingleChoiceIDHandlerFunc func(GetSingleChoiceIDParams, *models.User) middleware.Responder
+type GetSingleChoiceIDHandlerFunc func(GetSingleChoiceIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetSingleChoiceIDHandlerFunc) Handle(params GetSingleChoiceIDParams, principal *models.User) middleware.Responder {
+func (fn GetSingleChoiceIDHandlerFunc) Handle(params GetSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GetSingleChoiceIDHandler interface for that can handle valid get single choice ID params
 type GetSingleChoiceIDHandler interface {
-	Handle(GetSingleChoiceIDParams, *models.User) middleware.Responder
+	Handle(GetSingleChoiceIDParams, *schemas.User) middleware.Responder
 }
 
 // NewGetSingleChoiceID creates a new http.Handler for the get single choice ID operation
@@ -55,9 +55,9 @@ func (o *GetSingleChoiceID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

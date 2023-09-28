@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // DeleteSingleChoiceGroupIDHandlerFunc turns a function with the right signature into a delete single choice group ID handler
-type DeleteSingleChoiceGroupIDHandlerFunc func(DeleteSingleChoiceGroupIDParams, *models.User) middleware.Responder
+type DeleteSingleChoiceGroupIDHandlerFunc func(DeleteSingleChoiceGroupIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteSingleChoiceGroupIDHandlerFunc) Handle(params DeleteSingleChoiceGroupIDParams, principal *models.User) middleware.Responder {
+func (fn DeleteSingleChoiceGroupIDHandlerFunc) Handle(params DeleteSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // DeleteSingleChoiceGroupIDHandler interface for that can handle valid delete single choice group ID params
 type DeleteSingleChoiceGroupIDHandler interface {
-	Handle(DeleteSingleChoiceGroupIDParams, *models.User) middleware.Responder
+	Handle(DeleteSingleChoiceGroupIDParams, *schemas.User) middleware.Responder
 }
 
 // NewDeleteSingleChoiceGroupID creates a new http.Handler for the delete single choice group ID operation
@@ -55,9 +55,9 @@ func (o *DeleteSingleChoiceGroupID) ServeHTTP(rw http.ResponseWriter, r *http.Re
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // DeleteCategoryIDHandlerFunc turns a function with the right signature into a delete category ID handler
-type DeleteCategoryIDHandlerFunc func(DeleteCategoryIDParams, *models.User) middleware.Responder
+type DeleteCategoryIDHandlerFunc func(DeleteCategoryIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteCategoryIDHandlerFunc) Handle(params DeleteCategoryIDParams, principal *models.User) middleware.Responder {
+func (fn DeleteCategoryIDHandlerFunc) Handle(params DeleteCategoryIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // DeleteCategoryIDHandler interface for that can handle valid delete category ID params
 type DeleteCategoryIDHandler interface {
-	Handle(DeleteCategoryIDParams, *models.User) middleware.Responder
+	Handle(DeleteCategoryIDParams, *schemas.User) middleware.Responder
 }
 
 // NewDeleteCategoryID creates a new http.Handler for the delete category ID operation
@@ -55,9 +55,9 @@ func (o *DeleteCategoryID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc turns a function with the right signature into a get single choice group group ID single choice handler
-type GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc func(GetSingleChoiceGroupGroupIDSingleChoiceParams, *models.User) middleware.Responder
+type GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc func(GetSingleChoiceGroupGroupIDSingleChoiceParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc) Handle(params GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *models.User) middleware.Responder {
+func (fn GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc) Handle(params GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GetSingleChoiceGroupGroupIDSingleChoiceHandler interface for that can handle valid get single choice group group ID single choice params
 type GetSingleChoiceGroupGroupIDSingleChoiceHandler interface {
-	Handle(GetSingleChoiceGroupGroupIDSingleChoiceParams, *models.User) middleware.Responder
+	Handle(GetSingleChoiceGroupGroupIDSingleChoiceParams, *schemas.User) middleware.Responder
 }
 
 // NewGetSingleChoiceGroupGroupIDSingleChoice creates a new http.Handler for the get single choice group group ID single choice operation
@@ -55,9 +55,9 @@ func (o *GetSingleChoiceGroupGroupIDSingleChoice) ServeHTTP(rw http.ResponseWrit
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

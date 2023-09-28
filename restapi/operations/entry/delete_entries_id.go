@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // DeleteEntriesIDHandlerFunc turns a function with the right signature into a delete entries ID handler
-type DeleteEntriesIDHandlerFunc func(DeleteEntriesIDParams, *models.User) middleware.Responder
+type DeleteEntriesIDHandlerFunc func(DeleteEntriesIDParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteEntriesIDHandlerFunc) Handle(params DeleteEntriesIDParams, principal *models.User) middleware.Responder {
+func (fn DeleteEntriesIDHandlerFunc) Handle(params DeleteEntriesIDParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // DeleteEntriesIDHandler interface for that can handle valid delete entries ID params
 type DeleteEntriesIDHandler interface {
-	Handle(DeleteEntriesIDParams, *models.User) middleware.Responder
+	Handle(DeleteEntriesIDParams, *schemas.User) middleware.Responder
 }
 
 // NewDeleteEntriesID creates a new http.Handler for the delete entries ID operation
@@ -55,9 +55,9 @@ func (o *DeleteEntriesID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

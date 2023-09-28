@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // PostCategoryCategoryIDSingleChoiceGroupHandlerFunc turns a function with the right signature into a post category category ID single choice group handler
-type PostCategoryCategoryIDSingleChoiceGroupHandlerFunc func(PostCategoryCategoryIDSingleChoiceGroupParams, *models.User) middleware.Responder
+type PostCategoryCategoryIDSingleChoiceGroupHandlerFunc func(PostCategoryCategoryIDSingleChoiceGroupParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PostCategoryCategoryIDSingleChoiceGroupHandlerFunc) Handle(params PostCategoryCategoryIDSingleChoiceGroupParams, principal *models.User) middleware.Responder {
+func (fn PostCategoryCategoryIDSingleChoiceGroupHandlerFunc) Handle(params PostCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PostCategoryCategoryIDSingleChoiceGroupHandler interface for that can handle valid post category category ID single choice group params
 type PostCategoryCategoryIDSingleChoiceGroupHandler interface {
-	Handle(PostCategoryCategoryIDSingleChoiceGroupParams, *models.User) middleware.Responder
+	Handle(PostCategoryCategoryIDSingleChoiceGroupParams, *schemas.User) middleware.Responder
 }
 
 // NewPostCategoryCategoryIDSingleChoiceGroup creates a new http.Handler for the post category category ID single choice group operation
@@ -55,9 +55,9 @@ func (o *PostCategoryCategoryIDSingleChoiceGroup) ServeHTTP(rw http.ResponseWrit
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

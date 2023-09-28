@@ -24,6 +24,10 @@ type Convertable[T interface{}] interface {
 	SetParentId(id uint)
 }
 
+type SchemaAuth interface {
+	GetOwnerID(ctx context.Context, db *gorm.DB) uint
+}
+
 func FromModelFunc[Model interface{}, SchemaPtr Convertable[Model]](schema SchemaPtr, ctx context.Context, db *gorm.DB, model Model) error {
 	return schema.FromModel(ctx, db, model)
 }
@@ -45,15 +49,20 @@ func errorResponder(code int, err error) middleware.Responder {
 	return responder
 }
 
-func ListHandler[Model interface{}, Schema interface{}, Parent interface{}](
+func ListHandler[Model interface{}, Schema SchemaAuth, Parent interface{}](
 	r *http.Request,
 	db *gorm.DB,
+	principal *schemas.User,
 	getParent func(ctx context.Context, db *gorm.DB) (Parent, error),
 	listItems func(ctx context.Context, db *gorm.DB, parent *Parent) ([]Schema, error),
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(modelList []*Model) middleware.Responder,
 ) middleware.Responder {
 	ctx := r.Context()
+
+	if principal == nil {
+		return errorResponder(http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+	}
 
 	parent, parentErr := getParent(ctx, db)
 	if parentErr != nil {
@@ -67,25 +76,32 @@ func ListHandler[Model interface{}, Schema interface{}, Parent interface{}](
 
 	modelList := make([]*Model, len(schemaList))
 	for idx := range schemaList {
-		item, err := toModelFunc(&schemaList[idx], ctx, db)
-		if err != nil {
-			return errorResponder(http.StatusInternalServerError, err)
+		if principal.UpdateAllowed(schemaList[idx].GetOwnerID(ctx, db)) {
+			item, err := toModelFunc(&schemaList[idx], ctx, db)
+			if err != nil {
+				return errorResponder(http.StatusInternalServerError, err)
+			}
+			modelList[idx] = &item
 		}
-		modelList[idx] = &item
 	}
 
 	return successFunc(modelList)
 }
 
-func GetHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
+func GetHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	r *http.Request,
 	db *gorm.DB,
 	id N,
+	principal *schemas.User,
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(model *Model) middleware.Responder,
 ) middleware.Responder {
 	var err error
 	ctx := r.Context()
+
+	if principal == nil {
+		return errorResponder(http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+	}
 
 	var schema Schema
 	schema, err = schemas.DbGetFromId[Schema](ctx, db, id)
@@ -93,21 +109,30 @@ func GetHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 		return errorResponder(http.StatusNotFound, err)
 	}
 
+	if !principal.ReadAllowed(schema.GetOwnerID(ctx, db)) {
+		return errorResponder(http.StatusForbidden, fmt.Errorf("action not permitted"))
+	}
+
 	model, _ := toModelFunc(&schema, ctx, db)
 	return successFunc(&model)
 }
 
-func PostHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
+func PostHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	r *http.Request,
 	db *gorm.DB,
 	body *Model,
 	parentId N,
+	principal *schemas.User,
 	fromModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB, model Model) error,
 	setParentIdFunc func(schema *Schema, parentId uint),
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(model *Model) middleware.Responder,
 ) middleware.Responder {
 	ctx := r.Context()
+
+	if principal == nil {
+		return errorResponder(http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+	}
 
 	if body == nil {
 		return errorResponder(http.StatusBadRequest, fmt.Errorf("body is missing"))
@@ -119,6 +144,10 @@ func PostHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 	}
 	setParentIdFunc(&schema, uint(parentId))
 
+	if !principal.CreateAllowed(schema.GetOwnerID(ctx, db)) {
+		return errorResponder(http.StatusForbidden, fmt.Errorf("action not permitted"))
+	}
+
 	if err := db.WithContext(ctx).Create(&schema).Error; err != nil {
 		return errorResponder(http.StatusInternalServerError, err)
 	}
@@ -127,17 +156,22 @@ func PostHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 	return successFunc(&model)
 }
 
-func PutHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
+func PutHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	r *http.Request,
 	db *gorm.DB,
 	body *Model,
 	id N,
+	principal *schemas.User,
 	fromModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB, model Model) error,
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(model *Model) middleware.Responder,
 ) middleware.Responder {
 	var err error
 	ctx := r.Context()
+
+	if principal == nil {
+		return errorResponder(http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+	}
 
 	if body == nil {
 		return errorResponder(http.StatusBadRequest, fmt.Errorf("body is missing"))
@@ -147,6 +181,10 @@ func PutHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 	schema, err = schemas.DbGetFromId[Schema](ctx, db, id)
 	if err != nil {
 		return errorResponder(http.StatusNotFound, err)
+	}
+
+	if !principal.UpdateAllowed(schema.GetOwnerID(ctx, db)) {
+		return errorResponder(http.StatusForbidden, fmt.Errorf("action not permitted"))
 	}
 
 	err = fromModelFunc(&schema, ctx, db, *body)
@@ -163,14 +201,22 @@ func PutHandler[Model interface{}, Schema interface{}, N int32 | int64 | uint](
 	return successFunc(&model)
 }
 
-func DeleteHandler[Schema interface{}, N int32 | int64 | uint](r *http.Request, db *gorm.DB, id N, successFunc func() middleware.Responder) middleware.Responder {
+func DeleteHandler[Schema SchemaAuth, N int32 | int64 | uint](r *http.Request, db *gorm.DB, id N, principal *schemas.User, successFunc func() middleware.Responder) middleware.Responder {
 	var err error
 	ctx := r.Context()
+
+	if principal == nil {
+		return errorResponder(http.StatusUnauthorized, fmt.Errorf("unauthorized"))
+	}
 
 	var schema Schema
 	schema, err = schemas.DbGetFromId[Schema](ctx, db, id)
 	if err != nil {
 		return errorResponder(http.StatusNotFound, err)
+	}
+
+	if !principal.DeleteAllowed(schema.GetOwnerID(ctx, db)) {
+		return errorResponder(http.StatusForbidden, fmt.Errorf("action not permitted"))
 	}
 
 	err = db.WithContext(ctx).Delete(&schema).Error

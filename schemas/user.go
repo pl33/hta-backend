@@ -23,11 +23,27 @@ type User struct {
 	Categories    []Category `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-func LookupUser(ctx context.Context, db *gorm.DB, id int32) (User, error) {
+func LookupUser(ctx context.Context, db *gorm.DB, id uint) (User, error) {
 	user, userErr := DbGetFromId[User](ctx, db, id)
 	if userErr != nil {
 		return User{}, userErr
 	}
 
 	return user, nil
+}
+
+func (user *User) CreateAllowed(objOwnerId uint) bool {
+	return user.ID == objOwnerId
+}
+
+func (user *User) UpdateAllowed(objOwnerId uint) bool {
+	return user.ID == objOwnerId
+}
+
+func (user *User) ReadAllowed(objOwnerId uint) bool {
+	return user.ID == objOwnerId
+}
+
+func (user *User) DeleteAllowed(objOwnerId uint) bool {
+	return user.ID == objOwnerId
 }

@@ -10,20 +10,20 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"hta_backend_2/schemas"
 )
 
 // GetCategoryCategoryIDSingleChoiceGroupHandlerFunc turns a function with the right signature into a get category category ID single choice group handler
-type GetCategoryCategoryIDSingleChoiceGroupHandlerFunc func(GetCategoryCategoryIDSingleChoiceGroupParams, *models.User) middleware.Responder
+type GetCategoryCategoryIDSingleChoiceGroupHandlerFunc func(GetCategoryCategoryIDSingleChoiceGroupParams, *schemas.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetCategoryCategoryIDSingleChoiceGroupHandlerFunc) Handle(params GetCategoryCategoryIDSingleChoiceGroupParams, principal *models.User) middleware.Responder {
+func (fn GetCategoryCategoryIDSingleChoiceGroupHandlerFunc) Handle(params GetCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GetCategoryCategoryIDSingleChoiceGroupHandler interface for that can handle valid get category category ID single choice group params
 type GetCategoryCategoryIDSingleChoiceGroupHandler interface {
-	Handle(GetCategoryCategoryIDSingleChoiceGroupParams, *models.User) middleware.Responder
+	Handle(GetCategoryCategoryIDSingleChoiceGroupParams, *schemas.User) middleware.Responder
 }
 
 // NewGetCategoryCategoryIDSingleChoiceGroup creates a new http.Handler for the get category category ID single choice group operation
@@ -55,9 +55,9 @@ func (o *GetCategoryCategoryIDSingleChoiceGroup) ServeHTTP(rw http.ResponseWrite
 	if aCtx != nil {
 		*r = *aCtx
 	}
-	var principal *models.User
+	var principal *schemas.User
 	if uprinc != nil {
-		principal = uprinc.(*models.User) // this is really a models.User, I promise
+		principal = uprinc.(*schemas.User) // this is really a schemas.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
