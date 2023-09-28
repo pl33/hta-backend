@@ -36,35 +36,6 @@ type HealthEntry struct {
 	SingleChoices []CategorySingleChoiceItem `gorm:"many2many:entry_single_choices;" json:"single_choices"`
 }
 
-func (owner *User) ListHealthEntries(ctx context.Context, db *gorm.DB, first *int32, limit *int32) ([]HealthEntry, error) {
-	var entries []HealthEntry
-
-	if err := db.WithContext(ctx).Model(owner).Association("HealthEntries").Find(&entries); err != nil {
-		return entries, err
-	}
-
-	var start, end uint32
-	if first != nil {
-		start = uint32(*first)
-	} else {
-		start = 0
-	}
-	if limit != nil {
-		end = start + uint32(*limit)
-	} else {
-		end = uint32(len(entries))
-	}
-	if start > uint32(len(entries)) {
-		start = uint32(len(entries))
-	}
-	if end > uint32(len(entries)) {
-		end = uint32(len(entries))
-	}
-	entries = entries[start:end]
-
-	return entries, nil
-}
-
 func (entry HealthEntry) GetOwnerID(context.Context, *gorm.DB) uint {
 	return entry.UserID
 }

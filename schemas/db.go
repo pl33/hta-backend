@@ -96,3 +96,39 @@ func DbIdsOfAssoc[N int32 | int64 | uint](ctx context.Context, db *gorm.DB, mode
 
 	return ids, nil
 }
+
+func DbGetChildSlice[Parent interface{}, Schema interface{}](
+	ctx context.Context,
+	db *gorm.DB,
+	parent *Parent,
+	columnName string,
+	first *int32,
+	limit *int32,
+) ([]Schema, error) {
+	var objs []Schema
+
+	if err := db.WithContext(ctx).Model(parent).Association(columnName).Find(&objs); err != nil {
+		return *new([]Schema), err
+	}
+
+	var start, end uint32
+	if first != nil {
+		start = uint32(*first)
+	} else {
+		start = 0
+	}
+	if limit != nil {
+		end = start + uint32(*limit)
+	} else {
+		end = uint32(len(objs))
+	}
+	if start > uint32(len(objs)) {
+		start = uint32(len(objs))
+	}
+	if end > uint32(len(objs)) {
+		end = uint32(len(objs))
+	}
+	objs = objs[start:end]
+
+	return objs, nil
+}

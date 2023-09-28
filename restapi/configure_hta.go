@@ -132,7 +132,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 				return schemas.LookupUser(ctx, db, principal.ID)
 			},
 			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.HealthEntry, error) {
-				return owner.ListHealthEntries(ctx, db, params.First, params.Limit)
+				return schemas.DbGetChildSlice[schemas.User, schemas.HealthEntry](ctx, db, owner, "HealthEntries", params.First, params.Limit)
 			},
 			ToModelFunc[models.Entry, *schemas.HealthEntry],
 			func(modelList []*models.Entry) middleware.Responder {
