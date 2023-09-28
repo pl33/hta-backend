@@ -10,7 +10,9 @@ package schemas
 
 import (
 	"context"
+	"fmt"
 	"gorm.io/gorm"
+	"hta_backend_2/models"
 )
 
 type Category struct {
@@ -21,24 +23,31 @@ type Category struct {
 	SingleChoices []CategorySingleChoiceGroup `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-func (owner *User) AddCategory(ctx context.Context, db *gorm.DB, category *Category) error {
-	category.UserID = owner.ID
-	db.WithContext(ctx).Create(category)
-	return db.Error
+func (category Category) GetOwnerID(context.Context, *gorm.DB) uint {
+	return category.UserID
 }
 
-func (category *Category) AddChoice(ctx context.Context, db gorm.DB, choice *CategoryMultiChoice) error {
-	choice.CategoryID = category.ID
-	db.WithContext(ctx).Create(choice)
-	return db.Error
+func (category *Category) ToModel(context.Context, *gorm.DB) (models.Category, error) {
+	model := models.Category{
+		ID:     int32(category.ID),
+		UserID: int32(category.UserID),
+		Title:  &category.Title,
+	}
+	return model, nil
 }
 
-func (category *Category) authIsWritable(loggedInUser User) bool {
-	return category.UserID == loggedInUser.ID
+func (category *Category) FromModel(_ context.Context, _ *gorm.DB, model models.Category) error {
+	if model.Title == nil {
+		return fmt.Errorf("Title must not be nil")
+	}
+
+	category.Title = *model.Title
+
+	return nil
 }
 
-func (category *Category) authIsReadable(loggedInUser User) bool {
-	return category.UserID == loggedInUser.ID
+func (category *Category) SetParentId(id uint) {
+	category.UserID = id
 }
 
 type CategoryMultiChoice struct {
@@ -49,6 +58,41 @@ type CategoryMultiChoice struct {
 	Entries     []*HealthEntry `gorm:"many2many:entry_multi_choices;"`
 }
 
+func (choice *CategoryMultiChoice) GetParent(ctx context.Context, db *gorm.DB) (Category, error) {
+	category, err := DbGetFromId[Category](ctx, db, choice.CategoryID)
+	return category, err
+}
+
+func (choice CategoryMultiChoice) GetOwnerID(ctx context.Context, db *gorm.DB) uint {
+	category, err := choice.GetParent(ctx, db)
+	if err == nil {
+		return category.UserID
+	} else {
+		return 0 // Invalid user ID
+	}
+}
+
+func (choice *CategoryMultiChoice) ToModel(context.Context, *gorm.DB) (models.CategoryMultiChoice, error) {
+	model := models.CategoryMultiChoice{
+		ID:          int32(choice.ID),
+		CategoryID:  int32(choice.CategoryID),
+		Title:       &choice.Title,
+		Description: choice.Description,
+	}
+	return model, nil
+}
+
+func (choice *CategoryMultiChoice) FromModel(_ context.Context, _ *gorm.DB, model models.CategoryMultiChoice) error {
+	choice.Title = *model.Title
+	choice.Description = model.Description
+
+	return nil
+}
+
+func (choice *CategoryMultiChoice) SetParentId(id uint) {
+	choice.CategoryID = id
+}
+
 type CategorySingleChoiceGroup struct {
 	gorm.Model
 	CategoryID  uint
@@ -57,10 +101,39 @@ type CategorySingleChoiceGroup struct {
 	Choices     []CategorySingleChoiceItem `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-func (group *CategorySingleChoiceGroup) AddChoice(ctx context.Context, db gorm.DB, choice *CategorySingleChoiceItem) error {
-	choice.CategorySingleChoiceGroupID = group.ID
-	db.WithContext(ctx).Create(choice)
-	return db.Error
+func (choice *CategorySingleChoiceGroup) GetParent(ctx context.Context, db *gorm.DB) (Category, error) {
+	category, err := DbGetFromId[Category](ctx, db, choice.CategoryID)
+	return category, err
+}
+
+func (choice CategorySingleChoiceGroup) GetOwnerID(ctx context.Context, db *gorm.DB) uint {
+	category, err := choice.GetParent(ctx, db)
+	if err == nil {
+		return category.UserID
+	} else {
+		return 0 // Invalid user ID
+	}
+}
+
+func (choice *CategorySingleChoiceGroup) ToModel(context.Context, *gorm.DB) (models.CategorySingleChoiceGroup, error) {
+	model := models.CategorySingleChoiceGroup{
+		ID:          int32(choice.ID),
+		CategoryID:  int32(choice.CategoryID),
+		Title:       &choice.Title,
+		Description: choice.Description,
+	}
+	return model, nil
+}
+
+func (choice *CategorySingleChoiceGroup) FromModel(_ context.Context, _ *gorm.DB, model models.CategorySingleChoiceGroup) error {
+	choice.Title = *model.Title
+	choice.Description = model.Description
+
+	return nil
+}
+
+func (choice *CategorySingleChoiceGroup) SetParentId(id uint) {
+	choice.CategoryID = id
 }
 
 type CategorySingleChoiceItem struct {
@@ -69,4 +142,42 @@ type CategorySingleChoiceItem struct {
 	Title                       string
 	Description                 string
 	Entries                     []*HealthEntry `gorm:"many2many:entry_single_choices;"`
+}
+
+func (choice *CategorySingleChoiceItem) GetParent(ctx context.Context, db *gorm.DB) (CategorySingleChoiceGroup, error) {
+	group, err := DbGetFromId[CategorySingleChoiceGroup](ctx, db, choice.CategorySingleChoiceGroupID)
+	return group, err
+}
+
+func (choice CategorySingleChoiceItem) GetOwnerID(ctx context.Context, db *gorm.DB) uint {
+	group, err1 := choice.GetParent(ctx, db)
+	if err1 != nil {
+		return 0 // Invalid user ID
+	}
+	category, err2 := group.GetParent(ctx, db)
+	if err2 != nil {
+		return 0 // Invalid user ID
+	}
+	return category.UserID
+}
+
+func (choice *CategorySingleChoiceItem) ToModel(context.Context, *gorm.DB) (models.CategorySingleChoice, error) {
+	model := models.CategorySingleChoice{
+		ID:          int32(choice.ID),
+		GroupID:     int32(choice.CategorySingleChoiceGroupID),
+		Title:       &choice.Title,
+		Description: choice.Description,
+	}
+	return model, nil
+}
+
+func (choice *CategorySingleChoiceItem) FromModel(_ context.Context, _ *gorm.DB, model models.CategorySingleChoice) error {
+	choice.Title = *model.Title
+	choice.Description = model.Description
+
+	return nil
+}
+
+func (choice *CategorySingleChoiceItem) SetParentId(id uint) {
+	choice.CategorySingleChoiceGroupID = id
 }
