@@ -127,6 +127,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 		return ListHandler[models.Entry, schemas.HealthEntry](
 			params.HTTPRequest,
 			db,
+			principal,
 			func(ctx context.Context, db *gorm.DB) (schemas.User, error) {
 				return schemas.LookupUser(ctx, db, principal.ID)
 			},
