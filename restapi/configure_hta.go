@@ -171,31 +171,69 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 
 	/////////////////////////////////////////////////////////////////
 	// Category
-	if api.CategoryGetCategoryHandler == nil {
-		api.CategoryGetCategoryHandler = category.GetCategoryHandlerFunc(func(params category.GetCategoryParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetCategory has not yet been implemented")
+	api.CategoryGetCategoryHandler = category.GetCategoryHandlerFunc(func(params category.GetCategoryParams, principal *schemas.User) middleware.Responder {
+		return ListHandler[models.Category, schemas.Category](
+			params.HTTPRequest,
+			db,
+			principal,
+			func(ctx context.Context, db *gorm.DB) (schemas.User, error) {
+				return schemas.LookupUser(ctx, db, principal.ID)
+			},
+			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.Category, error) {
+				return schemas.DbGetChildSlice[schemas.User, schemas.Category](ctx, db, owner, "Categories", params.First, params.Limit)
+			},
+			ToModelFunc[models.Category, *schemas.Category],
+			func(modelList []*models.Category) middleware.Responder {
+				return category.NewGetCategoryOK().WithPayload(modelList)
+			},
+		)
+	})
+	api.CategoryPostCategoryHandler = category.PostCategoryHandlerFunc(func(params category.PostCategoryParams, principal *schemas.User) middleware.Responder {
+		return PostHandler[models.Category, schemas.Category](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			principal.ID,
+			principal,
+			FromModelFunc[models.Category, *schemas.Category],
+			SetParentIdFunc[models.Category, *schemas.Category],
+			ToModelFunc[models.Category, *schemas.Category],
+			func(model *models.Category) middleware.Responder {
+				return category.NewPostCategoryCreated().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryGetCategoryIDHandler = category.GetCategoryIDHandlerFunc(func(params category.GetCategoryIDParams, principal *schemas.User) middleware.Responder {
+		return GetHandler[models.Category, schemas.Category](
+			params.HTTPRequest,
+			db,
+			params.ID,
+			principal,
+			ToModelFunc[models.Category, *schemas.Category],
+			func(model *models.Category) middleware.Responder {
+				return category.NewGetCategoryIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryPutCategoryIDHandler = category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *schemas.User) middleware.Responder {
+		return PutHandler[models.Category, schemas.Category](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.ID,
+			principal,
+			FromModelFunc[models.Category, *schemas.Category],
+			ToModelFunc[models.Category, *schemas.Category],
+			func(model *models.Category) middleware.Responder {
+				return category.NewPutCategoryIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryDeleteCategoryIDHandler = category.DeleteCategoryIDHandlerFunc(func(params category.DeleteCategoryIDParams, principal *schemas.User) middleware.Responder {
+		return DeleteHandler[schemas.Category](params.HTTPRequest, db, params.ID, principal, func() middleware.Responder {
+			return category.NewDeleteCategoryIDNoContent()
 		})
-	}
-	if api.CategoryPostCategoryHandler == nil {
-		api.CategoryPostCategoryHandler = category.PostCategoryHandlerFunc(func(params category.PostCategoryParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PostCategory has not yet been implemented")
-		})
-	}
-	if api.CategoryGetCategoryIDHandler == nil {
-		api.CategoryGetCategoryIDHandler = category.GetCategoryIDHandlerFunc(func(params category.GetCategoryIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetCategoryID has not yet been implemented")
-		})
-	}
-	if api.CategoryPutCategoryIDHandler == nil {
-		api.CategoryPutCategoryIDHandler = category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PutCategoryID has not yet been implemented")
-		})
-	}
-	if api.CategoryDeleteCategoryIDHandler == nil {
-		api.CategoryDeleteCategoryIDHandler = category.DeleteCategoryIDHandlerFunc(func(params category.DeleteCategoryIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.DeleteCategoryID has not yet been implemented")
-		})
-	}
+	})
 
 	/////////////////////////////////////////////////////////////////
 	// Multi Choice
