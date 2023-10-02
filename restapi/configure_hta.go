@@ -303,59 +303,135 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 
 	/////////////////////////////////////////////////////////////////
 	// Single Choice Group
-	if api.CategoryGetCategoryCategoryIDSingleChoiceGroupHandler == nil {
-		api.CategoryGetCategoryCategoryIDSingleChoiceGroupHandler = category.GetCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.GetCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
+	api.CategoryGetCategoryCategoryIDSingleChoiceGroupHandler = category.GetCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.GetCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
+		return ListHandler[models.CategorySingleChoiceGroup, schemas.CategorySingleChoiceGroup](
+			params.HTTPRequest,
+			db,
+			principal,
+			func(ctx context.Context, db *gorm.DB) (schemas.Category, error) {
+				return schemas.DbGetFromId[schemas.Category](ctx, db, params.CategoryID)
+			},
+			func(ctx context.Context, db *gorm.DB, parent *schemas.Category) ([]schemas.CategorySingleChoiceGroup, error) {
+				return schemas.DbGetChildSlice[schemas.Category, schemas.CategorySingleChoiceGroup](ctx, db, parent, "SingleChoices", params.First, params.Limit)
+			},
+			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			func(modelList []*models.CategorySingleChoiceGroup) middleware.Responder {
+				return category.NewGetCategoryCategoryIDSingleChoiceGroupOK().WithPayload(modelList)
+			},
+		)
+	})
+	api.CategoryPostCategoryCategoryIDSingleChoiceGroupHandler = category.PostCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.PostCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
+		return PostHandler[models.CategorySingleChoiceGroup, schemas.CategorySingleChoiceGroup](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.CategoryID,
+			principal,
+			FromModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			SetParentIdFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			func(model *models.CategorySingleChoiceGroup) middleware.Responder {
+				return category.NewPostCategoryCategoryIDSingleChoiceGroupCreated().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryGetSingleChoiceGroupIDHandler = category.GetSingleChoiceGroupIDHandlerFunc(func(params category.GetSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
+		return GetHandler[models.CategorySingleChoiceGroup, schemas.CategorySingleChoiceGroup](
+			params.HTTPRequest,
+			db,
+			params.ID,
+			principal,
+			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			func(model *models.CategorySingleChoiceGroup) middleware.Responder {
+				return category.NewGetSingleChoiceGroupIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryPutSingleChoiceGroupIDHandler = category.PutSingleChoiceGroupIDHandlerFunc(func(params category.PutSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
+		return PutHandler[models.CategorySingleChoiceGroup, schemas.CategorySingleChoiceGroup](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.ID,
+			principal,
+			FromModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			func(model *models.CategorySingleChoiceGroup) middleware.Responder {
+				return category.NewPutSingleChoiceGroupIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryDeleteSingleChoiceGroupIDHandler = category.DeleteSingleChoiceGroupIDHandlerFunc(func(params category.DeleteSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
+		return DeleteHandler[schemas.CategorySingleChoiceGroup](params.HTTPRequest, db, params.ID, principal, func() middleware.Responder {
+			return category.NewDeleteSingleChoiceGroupIDNoContent()
 		})
-	}
-	if api.CategoryPostCategoryCategoryIDSingleChoiceGroupHandler == nil {
-		api.CategoryPostCategoryCategoryIDSingleChoiceGroupHandler = category.PostCategoryCategoryIDSingleChoiceGroupHandlerFunc(func(params category.PostCategoryCategoryIDSingleChoiceGroupParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PostCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
-		})
-	}
-	if api.CategoryGetSingleChoiceGroupIDHandler == nil {
-		api.CategoryGetSingleChoiceGroupIDHandler = category.GetSingleChoiceGroupIDHandlerFunc(func(params category.GetSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetSingleChoiceGroupID has not yet been implemented")
-		})
-	}
-	if api.CategoryPutSingleChoiceGroupIDHandler == nil {
-		api.CategoryPutSingleChoiceGroupIDHandler = category.PutSingleChoiceGroupIDHandlerFunc(func(params category.PutSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PutSingleChoiceGroupID has not yet been implemented")
-		})
-	}
-	if api.CategoryDeleteSingleChoiceGroupIDHandler == nil {
-		api.CategoryDeleteSingleChoiceGroupIDHandler = category.DeleteSingleChoiceGroupIDHandlerFunc(func(params category.DeleteSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.DeleteSingleChoiceGroupID has not yet been implemented")
-		})
-	}
+	})
 
 	/////////////////////////////////////////////////////////////////
 	// Single Choice Item
-	if api.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
-		api.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler = category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
+	api.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler = category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
+		return ListHandler[models.CategorySingleChoice, schemas.CategorySingleChoiceItem](
+			params.HTTPRequest,
+			db,
+			principal,
+			func(ctx context.Context, db *gorm.DB) (schemas.CategorySingleChoiceGroup, error) {
+				return schemas.DbGetFromId[schemas.CategorySingleChoiceGroup](ctx, db, params.GroupID)
+			},
+			func(ctx context.Context, db *gorm.DB, parent *schemas.CategorySingleChoiceGroup) ([]schemas.CategorySingleChoiceItem, error) {
+				return schemas.DbGetChildSlice[schemas.CategorySingleChoiceGroup, schemas.CategorySingleChoiceItem](ctx, db, parent, "Choices", params.First, params.Limit)
+			},
+			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			func(modelList []*models.CategorySingleChoice) middleware.Responder {
+				return category.NewGetSingleChoiceGroupGroupIDSingleChoiceOK().WithPayload(modelList)
+			},
+		)
+	})
+	api.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler = category.PostSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.PostSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
+		return PostHandler[models.CategorySingleChoice, schemas.CategorySingleChoiceItem](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.GroupID,
+			principal,
+			FromModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			SetParentIdFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			func(model *models.CategorySingleChoice) middleware.Responder {
+				return category.NewPostSingleChoiceGroupGroupIDSingleChoiceCreated().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryGetSingleChoiceIDHandler = category.GetSingleChoiceIDHandlerFunc(func(params category.GetSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
+		return GetHandler[models.CategorySingleChoice, schemas.CategorySingleChoiceItem](
+			params.HTTPRequest,
+			db,
+			params.ID,
+			principal,
+			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			func(model *models.CategorySingleChoice) middleware.Responder {
+				return category.NewGetSingleChoiceIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryPutSingleChoiceIDHandler = category.PutSingleChoiceIDHandlerFunc(func(params category.PutSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
+		return PutHandler[models.CategorySingleChoice, schemas.CategorySingleChoiceItem](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.ID,
+			principal,
+			FromModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			func(model *models.CategorySingleChoice) middleware.Responder {
+				return category.NewPutSingleChoiceIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryDeleteSingleChoiceIDHandler = category.DeleteSingleChoiceIDHandlerFunc(func(params category.DeleteSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
+		return DeleteHandler[schemas.CategorySingleChoiceItem](params.HTTPRequest, db, params.ID, principal, func() middleware.Responder {
+			return category.NewDeleteSingleChoiceIDNoContent()
 		})
-	}
-	if api.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
-		api.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler = category.PostSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.PostSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PostSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
-		})
-	}
-	if api.CategoryGetSingleChoiceIDHandler == nil {
-		api.CategoryGetSingleChoiceIDHandler = category.GetSingleChoiceIDHandlerFunc(func(params category.GetSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetSingleChoiceID has not yet been implemented")
-		})
-	}
-	if api.CategoryPutSingleChoiceIDHandler == nil {
-		api.CategoryPutSingleChoiceIDHandler = category.PutSingleChoiceIDHandlerFunc(func(params category.PutSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PutSingleChoiceID has not yet been implemented")
-		})
-	}
-	if api.CategoryDeleteSingleChoiceIDHandler == nil {
-		api.CategoryDeleteSingleChoiceIDHandler = category.DeleteSingleChoiceIDHandlerFunc(func(params category.DeleteSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.DeleteSingleChoiceID has not yet been implemented")
-		})
-	}
+	})
 
 	/////////////////////////////////////////////////////////////////
 
