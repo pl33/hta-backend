@@ -181,6 +181,11 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			return middleware.NotImplemented("operation category.PostCategory has not yet been implemented")
 		})
 	}
+	if api.CategoryGetCategoryIDHandler == nil {
+		api.CategoryGetCategoryIDHandler = category.GetCategoryIDHandlerFunc(func(params category.GetCategoryIDParams, principal *schemas.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetCategoryID has not yet been implemented")
+		})
+	}
 	if api.CategoryPutCategoryIDHandler == nil {
 		api.CategoryPutCategoryIDHandler = category.PutCategoryIDHandlerFunc(func(params category.PutCategoryIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutCategoryID has not yet been implemented")
@@ -202,6 +207,11 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 	if api.CategoryPostCategoryCategoryIDMultiChoiceHandler == nil {
 		api.CategoryPostCategoryCategoryIDMultiChoiceHandler = category.PostCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.PostCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostCategoryCategoryIDMultiChoice has not yet been implemented")
+		})
+	}
+	if api.CategoryGetMultiChoiceIDHandler == nil {
+		api.CategoryGetMultiChoiceIDHandler = category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetMultiChoiceID has not yet been implemented")
 		})
 	}
 	if api.CategoryPutMultiChoiceIDHandler == nil {
@@ -227,6 +237,11 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			return middleware.NotImplemented("operation category.PostCategoryCategoryIDSingleChoiceGroup has not yet been implemented")
 		})
 	}
+	if api.CategoryGetSingleChoiceGroupIDHandler == nil {
+		api.CategoryGetSingleChoiceGroupIDHandler = category.GetSingleChoiceGroupIDHandlerFunc(func(params category.GetSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetSingleChoiceGroupID has not yet been implemented")
+		})
+	}
 	if api.CategoryPutSingleChoiceGroupIDHandler == nil {
 		api.CategoryPutSingleChoiceGroupIDHandler = category.PutSingleChoiceGroupIDHandlerFunc(func(params category.PutSingleChoiceGroupIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PutSingleChoiceGroupID has not yet been implemented")
@@ -248,6 +263,11 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 	if api.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
 		api.CategoryPostSingleChoiceGroupGroupIDSingleChoiceHandler = category.PostSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.PostSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.PostSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
+		})
+	}
+	if api.CategoryGetSingleChoiceIDHandler == nil {
+		api.CategoryGetSingleChoiceIDHandler = category.GetSingleChoiceIDHandlerFunc(func(params category.GetSingleChoiceIDParams, principal *schemas.User) middleware.Responder {
+			return middleware.NotImplemented("operation category.GetSingleChoiceID has not yet been implemented")
 		})
 	}
 	if api.CategoryPutSingleChoiceIDHandler == nil {
