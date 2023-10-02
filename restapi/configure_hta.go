@@ -237,31 +237,69 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 
 	/////////////////////////////////////////////////////////////////
 	// Multi Choice
-	if api.CategoryGetCategoryCategoryIDMultiChoiceHandler == nil {
-		api.CategoryGetCategoryCategoryIDMultiChoiceHandler = category.GetCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.GetCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetCategoryCategoryIDMultiChoice has not yet been implemented")
+	api.CategoryGetCategoryCategoryIDMultiChoiceHandler = category.GetCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.GetCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
+		return ListHandler[models.CategoryMultiChoice, schemas.CategoryMultiChoice](
+			params.HTTPRequest,
+			db,
+			principal,
+			func(ctx context.Context, db *gorm.DB) (schemas.Category, error) {
+				return schemas.DbGetFromId[schemas.Category](ctx, db, params.CategoryID)
+			},
+			func(ctx context.Context, db *gorm.DB, parent *schemas.Category) ([]schemas.CategoryMultiChoice, error) {
+				return schemas.DbGetChildSlice[schemas.Category, schemas.CategoryMultiChoice](ctx, db, parent, "MultiChoices", params.First, params.Limit)
+			},
+			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			func(modelList []*models.CategoryMultiChoice) middleware.Responder {
+				return category.NewGetCategoryCategoryIDMultiChoiceOK().WithPayload(modelList)
+			},
+		)
+	})
+	api.CategoryPostCategoryCategoryIDMultiChoiceHandler = category.PostCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.PostCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
+		return PostHandler[models.CategoryMultiChoice, schemas.CategoryMultiChoice](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.CategoryID,
+			principal,
+			FromModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			SetParentIdFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			func(model *models.CategoryMultiChoice) middleware.Responder {
+				return category.NewPostCategoryCategoryIDMultiChoiceCreated().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryGetMultiChoiceIDHandler = category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
+		return GetHandler[models.CategoryMultiChoice, schemas.CategoryMultiChoice](
+			params.HTTPRequest,
+			db,
+			params.ID,
+			principal,
+			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			func(model *models.CategoryMultiChoice) middleware.Responder {
+				return category.NewGetMultiChoiceIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryPutMultiChoiceIDHandler = category.PutMultiChoiceIDHandlerFunc(func(params category.PutMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
+		return PutHandler[models.CategoryMultiChoice, schemas.CategoryMultiChoice](
+			params.HTTPRequest,
+			db,
+			params.Body,
+			params.ID,
+			principal,
+			FromModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			func(model *models.CategoryMultiChoice) middleware.Responder {
+				return category.NewPutMultiChoiceIDOK().WithPayload(model)
+			},
+		)
+	})
+	api.CategoryDeleteMultiChoiceIDHandler = category.DeleteMultiChoiceIDHandlerFunc(func(params category.DeleteMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
+		return DeleteHandler[schemas.CategoryMultiChoice](params.HTTPRequest, db, params.ID, principal, func() middleware.Responder {
+			return category.NewDeleteMultiChoiceIDNoContent()
 		})
-	}
-	if api.CategoryPostCategoryCategoryIDMultiChoiceHandler == nil {
-		api.CategoryPostCategoryCategoryIDMultiChoiceHandler = category.PostCategoryCategoryIDMultiChoiceHandlerFunc(func(params category.PostCategoryCategoryIDMultiChoiceParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PostCategoryCategoryIDMultiChoice has not yet been implemented")
-		})
-	}
-	if api.CategoryGetMultiChoiceIDHandler == nil {
-		api.CategoryGetMultiChoiceIDHandler = category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.GetMultiChoiceID has not yet been implemented")
-		})
-	}
-	if api.CategoryPutMultiChoiceIDHandler == nil {
-		api.CategoryPutMultiChoiceIDHandler = category.PutMultiChoiceIDHandlerFunc(func(params category.PutMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.PutMultiChoiceID has not yet been implemented")
-		})
-	}
-	if api.CategoryDeleteMultiChoiceIDHandler == nil {
-		api.CategoryDeleteMultiChoiceIDHandler = category.DeleteMultiChoiceIDHandlerFunc(func(params category.DeleteMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
-			return middleware.NotImplemented("operation category.DeleteMultiChoiceID has not yet been implemented")
-		})
-	}
+	})
 
 	/////////////////////////////////////////////////////////////////
 	// Single Choice Group
