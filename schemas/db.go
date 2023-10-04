@@ -77,7 +77,6 @@ func DbGetManyFromIds[T interface{}, N int32 | int64 | uint](ctx context.Context
 		if err != nil {
 			return nil, err
 		}
-		// todo check permission
 		objs[i] = obj
 	}
 	return objs, nil

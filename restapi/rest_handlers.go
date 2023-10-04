@@ -124,6 +124,7 @@ func PostHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	parentId N,
 	principal *schemas.User,
 	fromModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB, model Model) error,
+	modelAuthFunc func(ctx context.Context, db *gorm.DB, principal *schemas.User, schema *Schema) error,
 	setParentIdFunc func(schema *Schema, parentId uint),
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(model *Model) middleware.Responder,
@@ -148,6 +149,12 @@ func PostHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 		return errorResponder(http.StatusForbidden, fmt.Errorf("action not permitted"))
 	}
 
+	if modelAuthFunc != nil {
+		if err := modelAuthFunc(ctx, db, principal, &schema); err != nil {
+			return errorResponder(http.StatusForbidden, err)
+		}
+	}
+
 	if err := db.WithContext(ctx).Create(&schema).Error; err != nil {
 		return errorResponder(http.StatusInternalServerError, err)
 	}
@@ -163,6 +170,7 @@ func PutHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	id N,
 	principal *schemas.User,
 	fromModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB, model Model) error,
+	modelAuthFunc func(ctx context.Context, db *gorm.DB, principal *schemas.User, schema *Schema) error,
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(model *Model) middleware.Responder,
 ) middleware.Responder {
@@ -190,6 +198,12 @@ func PutHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	err = fromModelFunc(&schema, ctx, db, *body)
 	if err != nil {
 		return errorResponder(http.StatusBadRequest, err)
+	}
+
+	if modelAuthFunc != nil {
+		if err := modelAuthFunc(ctx, db, principal, &schema); err != nil {
+			return errorResponder(http.StatusForbidden, err)
+		}
 	}
 
 	err = db.WithContext(ctx).Save(&schema).Error

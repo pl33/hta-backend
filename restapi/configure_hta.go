@@ -130,6 +130,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			principal.ID,
 			principal,
 			FromModelFunc[models.Entry, *schemas.HealthEntry],
+			schemas.ModelAuthHealthEntry,
 			SetParentIdFunc[models.Entry, *schemas.HealthEntry],
 			ToModelFunc[models.Entry, *schemas.HealthEntry],
 			func(model *models.Entry) middleware.Responder {
@@ -157,6 +158,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.Entry, *schemas.HealthEntry],
+			schemas.ModelAuthHealthEntry,
 			ToModelFunc[models.Entry, *schemas.HealthEntry],
 			func(model *models.Entry) middleware.Responder {
 				return entry.NewPostEntriesCreated().WithPayload(model)
@@ -196,6 +198,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			principal.ID,
 			principal,
 			FromModelFunc[models.Category, *schemas.Category],
+			nil,
 			SetParentIdFunc[models.Category, *schemas.Category],
 			ToModelFunc[models.Category, *schemas.Category],
 			func(model *models.Category) middleware.Responder {
@@ -223,6 +226,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.Category, *schemas.Category],
+			nil,
 			ToModelFunc[models.Category, *schemas.Category],
 			func(model *models.Category) middleware.Responder {
 				return category.NewPutCategoryIDOK().WithPayload(model)
@@ -262,6 +266,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.CategoryID,
 			principal,
 			FromModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			nil,
 			SetParentIdFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
 			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
 			func(model *models.CategoryMultiChoice) middleware.Responder {
@@ -289,6 +294,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
+			nil,
 			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
 			func(model *models.CategoryMultiChoice) middleware.Responder {
 				return category.NewPutMultiChoiceIDOK().WithPayload(model)
@@ -328,6 +334,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.CategoryID,
 			principal,
 			FromModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			nil,
 			SetParentIdFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
 			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
 			func(model *models.CategorySingleChoiceGroup) middleware.Responder {
@@ -355,6 +362,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
+			nil,
 			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
 			func(model *models.CategorySingleChoiceGroup) middleware.Responder {
 				return category.NewPutSingleChoiceGroupIDOK().WithPayload(model)
@@ -394,6 +402,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.GroupID,
 			principal,
 			FromModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			nil,
 			SetParentIdFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
 			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
 			func(model *models.CategorySingleChoice) middleware.Responder {
@@ -421,6 +430,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			nil,
 			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
 			func(model *models.CategorySingleChoice) middleware.Responder {
 				return category.NewPutSingleChoiceIDOK().WithPayload(model)

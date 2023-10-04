@@ -105,3 +105,17 @@ func (entry *HealthEntry) FromModel(ctx context.Context, db *gorm.DB, model mode
 func (entry *HealthEntry) SetParentId(id uint) {
 	entry.UserID = id
 }
+
+func ModelAuthHealthEntry(ctx context.Context, db *gorm.DB, principal *User, schema *HealthEntry) error {
+	for idx := range schema.MultiChoices {
+		if !principal.ReadAllowed(schema.MultiChoices[idx].GetOwnerID(ctx, db)) {
+			return fmt.Errorf("cannot access multi choice item")
+		}
+	}
+	for idx := range schema.SingleChoices {
+		if !principal.ReadAllowed(schema.SingleChoices[idx].GetOwnerID(ctx, db)) {
+			return fmt.Errorf("cannot access single choice item")
+		}
+	}
+	return nil
+}
