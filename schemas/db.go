@@ -11,13 +11,53 @@ package schemas
 import (
 	"context"
 	"fmt"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/url"
+	"strconv"
+	"strings"
 )
 
 func openSqlite(dbFile string) (*gorm.Dialector, error) {
 	dial := sqlite.Open(dbFile)
+	return &dial, nil
+}
+
+func openPostgres(url *url.URL) (*gorm.Dialector, error) {
+	var err error
+
+	if len(url.Hostname()) == 0 {
+		return nil, fmt.Errorf("no host given")
+	}
+	if len(url.Path) == 0 {
+		return nil, fmt.Errorf("no database name given")
+	}
+	var port int = 5432
+	if len(url.Port()) > 0 {
+		port, err = strconv.Atoi(url.Port())
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	pathElements := strings.Split(url.Path, "/")
+
+	dsn := fmt.Sprintf(
+		"host=%s dbname=%s port=%d sslmode=disable TimeZone=Europe/Berlin",
+		url.Hostname(),
+		pathElements[1],
+		port,
+	)
+	if url.User != nil {
+		dsn += fmt.Sprintf(" user=%s", url.User.Username())
+		passwd, havePasswd := url.User.Password()
+		if havePasswd {
+			dsn += fmt.Sprintf(" password=%s", passwd)
+		}
+	}
+
+	dial := postgres.Open(dsn)
 	return &dial, nil
 }
 
@@ -32,6 +72,8 @@ func OpenDb(db_url string) (*gorm.DB, error) {
 		switch driver {
 		case "sqlite3":
 			dial, err = openSqlite(urlObj.Path)
+		case "postgresql":
+			dial, err = openPostgres(urlObj)
 		default:
 			err = fmt.Errorf("Unsupported driver: %s", driver)
 		}
