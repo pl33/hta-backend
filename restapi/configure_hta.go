@@ -16,6 +16,7 @@ import (
 	"gorm.io/gorm"
 	"hta_backend_2/schemas"
 	"net/http"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
@@ -34,20 +35,32 @@ func configureFlags(api *operations.HtaAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
+const do_debug bool = false
+
 func configureAPI(api *operations.HtaAPI) http.Handler {
+	debugEnable := false
+	debugEnvStr, debugEnvErr := GetEnv("DEBUG_ENABLE")
+	if (debugEnvErr == nil) && (debugEnvStr == "cfe58f39-9d21-48ad-b0f8-84563532bc24") && do_debug {
+		debugEnable = true
+	}
+
 	db, db_err := schemas.OpenDb(GetEnvOrPanic("DB"))
 	if db_err != nil {
 		panic(db_err)
 	}
 
-	auth, auth_err := AuthSetup(
-		db,
-		GetEnvOrPanic("OIDC_ISSUER"),
-		GetEnvOrPanic("OIDC_CLIENT_ID"),
-		GetEnvOrPanic("OIDC_CLIENT_SECRET"),
-	)
-	if auth_err != nil {
-		panic(auth_err)
+	var auth Auth
+	if !debugEnable {
+		var err error
+		auth, err = AuthSetup(
+			db,
+			GetEnvOrPanic("OIDC_ISSUER"),
+			GetEnvOrPanic("OIDC_CLIENT_ID"),
+			GetEnvOrPanic("OIDC_CLIENT_SECRET"),
+		)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// configure the api here
@@ -68,8 +81,23 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	api.BearerTokenAuth = func(token string) (*schemas.User, error) {
-		user, err := AuthGetUser(context.Background(), &auth, token)
-		return &user, err
+		if !debugEnable {
+			user, err := AuthGetUser(context.Background(), &auth, token)
+			return &user, err
+		} else {
+			var uid int
+			var err error
+			uid, err = strconv.Atoi(token)
+			if err != nil {
+				return nil, err
+			}
+			var user schemas.User
+			user, err = schemas.DbGetFromId[schemas.User](context.Background(), db, uint(uid))
+			if err != nil {
+				return nil, err
+			}
+			return &user, nil
+		}
 	}
 
 	api.OauthSecurityAuth = func(token string, scopes []string) (*schemas.User, error) {
