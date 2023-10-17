@@ -53,7 +53,7 @@ func ListHandler[Model interface{}, Schema SchemaAuth, Parent interface{}](
 	r *http.Request,
 	db *gorm.DB,
 	principal *schemas.User,
-	getParent func(ctx context.Context, db *gorm.DB) (Parent, error),
+	getParent func(ctx context.Context, db *gorm.DB) (Parent, int, error),
 	listItems func(ctx context.Context, db *gorm.DB, parent *Parent) ([]Schema, error),
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(modelList []*Model) middleware.Responder,
@@ -64,9 +64,9 @@ func ListHandler[Model interface{}, Schema SchemaAuth, Parent interface{}](
 		return errorResponder(http.StatusUnauthorized, fmt.Errorf("unauthorized"))
 	}
 
-	parent, parentErr := getParent(ctx, db)
+	parent, parentCode, parentErr := getParent(ctx, db)
 	if parentErr != nil {
-		return errorResponder(http.StatusNotFound, parentErr)
+		return errorResponder(parentCode, parentErr)
 	}
 
 	schemaList, schemaErr := listItems(ctx, db, &parent)
@@ -76,7 +76,7 @@ func ListHandler[Model interface{}, Schema SchemaAuth, Parent interface{}](
 
 	modelList := make([]*Model, len(schemaList))
 	for idx := range schemaList {
-		if principal.UpdateAllowed(schemaList[idx].GetOwnerID(ctx, db)) {
+		if principal.ReadAllowed(schemaList[idx].GetOwnerID(ctx, db)) {
 			item, err := toModelFunc(&schemaList[idx], ctx, db)
 			if err != nil {
 				return errorResponder(http.StatusInternalServerError, err)

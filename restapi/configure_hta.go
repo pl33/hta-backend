@@ -13,6 +13,7 @@ package restapi
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"gorm.io/gorm"
 	"hta_backend_2/schemas"
 	"net/http"
@@ -138,8 +139,12 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.HTTPRequest,
 			db,
 			principal,
-			func(ctx context.Context, db *gorm.DB) (schemas.User, error) {
-				return schemas.LookupUser(ctx, db, principal.ID)
+			func(ctx context.Context, db *gorm.DB) (schemas.User, int, error) {
+				item, err := schemas.LookupUser(ctx, db, principal.ID)
+				if err != nil {
+					return schemas.User{}, http.StatusNotFound, err
+				}
+				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.HealthEntry, error) {
 				return schemas.DbGetChildSlice[schemas.User, schemas.HealthEntry](ctx, db, owner, "HealthEntries", params.First, params.Limit)
@@ -206,8 +211,12 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.HTTPRequest,
 			db,
 			principal,
-			func(ctx context.Context, db *gorm.DB) (schemas.User, error) {
-				return schemas.LookupUser(ctx, db, principal.ID)
+			func(ctx context.Context, db *gorm.DB) (schemas.User, int, error) {
+				item, err := schemas.LookupUser(ctx, db, principal.ID)
+				if err != nil {
+					return schemas.User{}, http.StatusNotFound, err
+				}
+				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.Category, error) {
 				return schemas.DbGetChildSlice[schemas.User, schemas.Category](ctx, db, owner, "Categories", params.First, params.Limit)
@@ -274,8 +283,15 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.HTTPRequest,
 			db,
 			principal,
-			func(ctx context.Context, db *gorm.DB) (schemas.Category, error) {
-				return schemas.DbGetFromId[schemas.Category](ctx, db, params.CategoryID)
+			func(ctx context.Context, db *gorm.DB) (schemas.Category, int, error) {
+				item, err := schemas.DbGetFromId[schemas.Category](ctx, db, params.CategoryID)
+				if err != nil {
+					return schemas.Category{}, http.StatusNotFound, err
+				}
+				if !principal.ReadAllowed(item.GetOwnerID(ctx, db)) {
+					return schemas.Category{}, http.StatusForbidden, fmt.Errorf("action not permitted")
+				}
+				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, parent *schemas.Category) ([]schemas.CategoryMultiChoice, error) {
 				return schemas.DbGetChildSlice[schemas.Category, schemas.CategoryMultiChoice](ctx, db, parent, "MultiChoices", params.First, params.Limit)
@@ -342,8 +358,15 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.HTTPRequest,
 			db,
 			principal,
-			func(ctx context.Context, db *gorm.DB) (schemas.Category, error) {
-				return schemas.DbGetFromId[schemas.Category](ctx, db, params.CategoryID)
+			func(ctx context.Context, db *gorm.DB) (schemas.Category, int, error) {
+				item, err := schemas.DbGetFromId[schemas.Category](ctx, db, params.CategoryID)
+				if err != nil {
+					return schemas.Category{}, http.StatusNotFound, err
+				}
+				if !principal.ReadAllowed(item.GetOwnerID(ctx, db)) {
+					return schemas.Category{}, http.StatusForbidden, fmt.Errorf("action not permitted")
+				}
+				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, parent *schemas.Category) ([]schemas.CategorySingleChoiceGroup, error) {
 				return schemas.DbGetChildSlice[schemas.Category, schemas.CategorySingleChoiceGroup](ctx, db, parent, "SingleChoices", params.First, params.Limit)
@@ -410,8 +433,15 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.HTTPRequest,
 			db,
 			principal,
-			func(ctx context.Context, db *gorm.DB) (schemas.CategorySingleChoiceGroup, error) {
-				return schemas.DbGetFromId[schemas.CategorySingleChoiceGroup](ctx, db, params.GroupID)
+			func(ctx context.Context, db *gorm.DB) (schemas.CategorySingleChoiceGroup, int, error) {
+				item, err := schemas.DbGetFromId[schemas.CategorySingleChoiceGroup](ctx, db, params.GroupID)
+				if err != nil {
+					return schemas.CategorySingleChoiceGroup{}, http.StatusNotFound, err
+				}
+				if !principal.ReadAllowed(item.GetOwnerID(ctx, db)) {
+					return schemas.CategorySingleChoiceGroup{}, http.StatusForbidden, fmt.Errorf("action not permitted")
+				}
+				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, parent *schemas.CategorySingleChoiceGroup) ([]schemas.CategorySingleChoiceItem, error) {
 				return schemas.DbGetChildSlice[schemas.CategorySingleChoiceGroup, schemas.CategorySingleChoiceItem](ctx, db, parent, "Choices", params.First, params.Limit)
