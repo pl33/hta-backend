@@ -194,7 +194,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			schemas.ModelAuthHealthEntry,
 			ToModelFunc[models.Entry, *schemas.HealthEntry],
 			func(model *models.Entry) middleware.Responder {
-				return entry.NewPostEntriesCreated().WithPayload(model)
+				return entry.NewPutEntriesIDOK().WithPayload(model)
 			},
 		)
 	})
