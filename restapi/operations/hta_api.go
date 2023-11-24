@@ -89,6 +89,9 @@ func NewHtaAPI(spec *loads.Document) *HtaAPI {
 		LoginGetOidcCallbackHandler: login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetOidcCallback has not yet been implemented")
 		}),
+		LoginGetOidcInfoHandler: login.GetOidcInfoHandlerFunc(func(params login.GetOidcInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation login.GetOidcInfo has not yet been implemented")
+		}),
 		CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler: category.GetSingleChoiceGroupGroupIDSingleChoiceHandlerFunc(func(params category.GetSingleChoiceGroupGroupIDSingleChoiceParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetSingleChoiceGroupGroupIDSingleChoice has not yet been implemented")
 		}),
@@ -216,6 +219,8 @@ type HtaAPI struct {
 	CategoryGetMultiChoiceIDHandler category.GetMultiChoiceIDHandler
 	// LoginGetOidcCallbackHandler sets the operation handler for the get oidc callback operation
 	LoginGetOidcCallbackHandler login.GetOidcCallbackHandler
+	// LoginGetOidcInfoHandler sets the operation handler for the get oidc info operation
+	LoginGetOidcInfoHandler login.GetOidcInfoHandler
 	// CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler sets the operation handler for the get single choice group group ID single choice operation
 	CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler category.GetSingleChoiceGroupGroupIDSingleChoiceHandler
 	// CategoryGetSingleChoiceGroupIDHandler sets the operation handler for the get single choice group ID operation
@@ -369,6 +374,9 @@ func (o *HtaAPI) Validate() error {
 	}
 	if o.LoginGetOidcCallbackHandler == nil {
 		unregistered = append(unregistered, "login.GetOidcCallbackHandler")
+	}
+	if o.LoginGetOidcInfoHandler == nil {
+		unregistered = append(unregistered, "login.GetOidcInfoHandler")
 	}
 	if o.CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler == nil {
 		unregistered = append(unregistered, "category.GetSingleChoiceGroupGroupIDSingleChoiceHandler")
@@ -572,6 +580,10 @@ func (o *HtaAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/oidc_callback"] = login.NewGetOidcCallback(o.context, o.LoginGetOidcCallbackHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/oidc_info"] = login.NewGetOidcInfo(o.context, o.LoginGetOidcInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

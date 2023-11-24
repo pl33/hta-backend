@@ -201,6 +201,24 @@ paths:
                     description: error
                     schema:
                         $ref: "#/definitions/error"
+    /oidc_info:
+        get:
+            summary: Obtain information about OpenID Connect
+            tags:
+                - login
+            security: [ ]
+            responses:
+                '200':
+                    description: OpenID Connect information
+                    schema:
+                        properties:
+                            discovery_url:
+                                type: string
+                                format: string
+                default:
+                    description: error
+                    schema:
+                        $ref: "#/definitions/error"
     /user/:
         get:
             tags:

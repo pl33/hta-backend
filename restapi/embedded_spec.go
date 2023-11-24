@@ -600,6 +600,34 @@ func init() {
         }
       }
     },
+    "/oidc_info": {
+      "get": {
+        "security": [],
+        "tags": [
+          "login"
+        ],
+        "summary": "Obtain information about OpenID Connect",
+        "responses": {
+          "200": {
+            "description": "OpenID Connect information",
+            "schema": {
+              "properties": {
+                "discovery_url": {
+                  "type": "string",
+                  "format": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/single_choice/{id}": {
       "get": {
         "tags": [
@@ -1632,6 +1660,34 @@ func init() {
             "schema": {
               "properties": {
                 "access_token": {
+                  "type": "string",
+                  "format": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/oidc_info": {
+      "get": {
+        "security": [],
+        "tags": [
+          "login"
+        ],
+        "summary": "Obtain information about OpenID Connect",
+        "responses": {
+          "200": {
+            "description": "OpenID Connect information",
+            "schema": {
+              "properties": {
+                "discovery_url": {
                   "type": "string",
                   "format": "string"
                 }

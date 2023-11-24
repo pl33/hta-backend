@@ -27,6 +27,7 @@ import (
 )
 
 type Auth struct {
+	issuer string
 	oidcRS rs.ResourceServer
 	oidcRP rp.RelyingParty
 	db     *gorm.DB
@@ -36,6 +37,7 @@ func AuthSetup(db *gorm.DB, issuer string, clientId string, clientSecret string)
 	var auth Auth
 
 	auth.db = db
+	auth.issuer = issuer
 
 	var err error
 	auth.oidcRS, err = rs.NewResourceServerClientCredentials(
