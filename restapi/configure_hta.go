@@ -154,7 +154,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.HealthEntry, error) {
-				return schemas.DbGetChildSlice[schemas.User, schemas.HealthEntry](ctx, db, owner, "HealthEntries", params.First, params.Limit)
+				return schemas.DbGetChildSlice[schemas.User, schemas.HealthEntry](ctx, db, owner, "HealthEntries", params.First, params.Limit, "start_time desc")
 			},
 			ToModelFunc[models.Entry, *schemas.HealthEntry],
 			func(modelList []*models.Entry) middleware.Responder {
@@ -226,7 +226,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, owner *schemas.User) ([]schemas.Category, error) {
-				return schemas.DbGetChildSlice[schemas.User, schemas.Category](ctx, db, owner, "Categories", params.First, params.Limit)
+				return schemas.DbGetChildSlice[schemas.User, schemas.Category](ctx, db, owner, "Categories", params.First, params.Limit, "id asc")
 			},
 			ToModelFunc[models.Category, *schemas.Category],
 			func(modelList []*models.Category) middleware.Responder {
@@ -301,7 +301,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, parent *schemas.Category) ([]schemas.CategoryMultiChoice, error) {
-				return schemas.DbGetChildSlice[schemas.Category, schemas.CategoryMultiChoice](ctx, db, parent, "MultiChoices", params.First, params.Limit)
+				return schemas.DbGetChildSlice[schemas.Category, schemas.CategoryMultiChoice](ctx, db, parent, "MultiChoices", params.First, params.Limit, "id asc")
 			},
 			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
 			func(modelList []*models.CategoryMultiChoice) middleware.Responder {
@@ -376,7 +376,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, parent *schemas.Category) ([]schemas.CategorySingleChoiceGroup, error) {
-				return schemas.DbGetChildSlice[schemas.Category, schemas.CategorySingleChoiceGroup](ctx, db, parent, "SingleChoices", params.First, params.Limit)
+				return schemas.DbGetChildSlice[schemas.Category, schemas.CategorySingleChoiceGroup](ctx, db, parent, "SingleChoices", params.First, params.Limit, "id asc")
 			},
 			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
 			func(modelList []*models.CategorySingleChoiceGroup) middleware.Responder {
@@ -451,7 +451,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 				return item, http.StatusOK, nil
 			},
 			func(ctx context.Context, db *gorm.DB, parent *schemas.CategorySingleChoiceGroup) ([]schemas.CategorySingleChoiceItem, error) {
-				return schemas.DbGetChildSlice[schemas.CategorySingleChoiceGroup, schemas.CategorySingleChoiceItem](ctx, db, parent, "Choices", params.First, params.Limit)
+				return schemas.DbGetChildSlice[schemas.CategorySingleChoiceGroup, schemas.CategorySingleChoiceItem](ctx, db, parent, "Choices", params.First, params.Limit, "id asc")
 			},
 			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
 			func(modelList []*models.CategorySingleChoice) middleware.Responder {

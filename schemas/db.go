@@ -145,10 +145,11 @@ func DbGetChildSlice[Parent interface{}, Schema interface{}](
 	columnName string,
 	first *int32,
 	limit *int32,
+	order string,
 ) ([]Schema, error) {
 	var objs []Schema
 
-	if err := db.WithContext(ctx).Model(parent).Association(columnName).Find(&objs); err != nil {
+	if err := db.WithContext(ctx).Model(parent).Order(order).Association(columnName).Find(&objs); err != nil {
 		return *new([]Schema), err
 	}
 
