@@ -27,17 +27,21 @@ import (
 )
 
 type Auth struct {
-	issuer string
-	oidcRS rs.ResourceServer
-	oidcRP rp.RelyingParty
-	db     *gorm.DB
+	issuer           string
+	clientId         string
+	frontendClientId string
+	oidcRS           rs.ResourceServer
+	oidcRP           rp.RelyingParty
+	db               *gorm.DB
 }
 
-func AuthSetup(db *gorm.DB, issuer string, clientId string, clientSecret string) (Auth, error) {
+func AuthSetup(db *gorm.DB, issuer string, clientId string, clientSecret string, frontendClientId string) (Auth, error) {
 	var auth Auth
 
 	auth.db = db
 	auth.issuer = issuer
+	auth.clientId = clientId
+	auth.frontendClientId = frontendClientId
 
 	var err error
 	auth.oidcRS, err = rs.NewResourceServerClientCredentials(

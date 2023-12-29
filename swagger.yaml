@@ -40,6 +40,20 @@ definitions:
                 format: int32
             message:
                 type: string
+    oidc_info:
+        type: object
+        required:
+            - discovery_url
+        properties:
+            discovery_url:
+                type: string
+                format: string
+            client_id:
+                type: string
+                format: string
+            client_secret:
+                type: string
+                format: string
     user:
         type: object
         properties:
@@ -211,10 +225,7 @@ paths:
                 '200':
                     description: OpenID Connect information
                     schema:
-                        properties:
-                            discovery_url:
-                                type: string
-                                format: string
+                        $ref: "#/definitions/oidc_info"
                 default:
                     description: error
                     schema:

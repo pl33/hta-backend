@@ -59,6 +59,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			GetEnvOrPanic("OIDC_ISSUER"),
 			GetEnvOrPanic("OIDC_CLIENT_ID"),
 			GetEnvOrPanic("OIDC_CLIENT_SECRET"),
+			GetEnvOrPanic("OIDC_FRONTEND_CLIENT_ID"),
 		)
 		if err != nil {
 			panic(err)
@@ -122,8 +123,11 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 		return AuthCallback(&auth, params.HTTPRequest)
 	})
 	api.LoginGetOidcInfoHandler = login.GetOidcInfoHandlerFunc(func(params login.GetOidcInfoParams) middleware.Responder {
-		model := login.GetOidcInfoOKBody{
-			DiscoveryURL: auth.issuer + "/.well-known/openid-configuration",
+		discoveryUrl := auth.issuer + "/.well-known/openid-configuration"
+		model := models.OidcInfo{
+			DiscoveryURL: &discoveryUrl,
+			ClientID:     auth.frontendClientId,
+			ClientSecret: "",
 		}
 		return login.NewGetOidcInfoOK().WithPayload(&model)
 	})

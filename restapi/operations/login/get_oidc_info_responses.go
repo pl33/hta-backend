@@ -26,7 +26,7 @@ type GetOidcInfoOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *GetOidcInfoOKBody `json:"body,omitempty"`
+	Payload *models.OidcInfo `json:"body,omitempty"`
 }
 
 // NewGetOidcInfoOK creates GetOidcInfoOK with default headers values
@@ -36,13 +36,13 @@ func NewGetOidcInfoOK() *GetOidcInfoOK {
 }
 
 // WithPayload adds the payload to the get oidc info o k response
-func (o *GetOidcInfoOK) WithPayload(payload *GetOidcInfoOKBody) *GetOidcInfoOK {
+func (o *GetOidcInfoOK) WithPayload(payload *models.OidcInfo) *GetOidcInfoOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get oidc info o k response
-func (o *GetOidcInfoOK) SetPayload(payload *GetOidcInfoOKBody) {
+func (o *GetOidcInfoOK) SetPayload(payload *models.OidcInfo) {
 	o.Payload = payload
 }
 

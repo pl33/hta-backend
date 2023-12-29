@@ -611,12 +611,7 @@ func init() {
           "200": {
             "description": "OpenID Connect information",
             "schema": {
-              "properties": {
-                "discovery_url": {
-                  "type": "string",
-                  "format": "string"
-                }
-              }
+              "$ref": "#/definitions/oidc_info"
             }
           },
           "default": {
@@ -1041,6 +1036,26 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "oidc_info": {
+      "type": "object",
+      "required": [
+        "discovery_url"
+      ],
+      "properties": {
+        "client_id": {
+          "type": "string",
+          "format": "string"
+        },
+        "client_secret": {
+          "type": "string",
+          "format": "string"
+        },
+        "discovery_url": {
+          "type": "string",
+          "format": "string"
         }
       }
     },
@@ -1686,12 +1701,7 @@ func init() {
           "200": {
             "description": "OpenID Connect information",
             "schema": {
-              "properties": {
-                "discovery_url": {
-                  "type": "string",
-                  "format": "string"
-                }
-              }
+              "$ref": "#/definitions/oidc_info"
             }
           },
           "default": {
@@ -2116,6 +2126,26 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "oidc_info": {
+      "type": "object",
+      "required": [
+        "discovery_url"
+      ],
+      "properties": {
+        "client_id": {
+          "type": "string",
+          "format": "string"
+        },
+        "client_secret": {
+          "type": "string",
+          "format": "string"
+        },
+        "discovery_url": {
+          "type": "string",
+          "format": "string"
         }
       }
     },
