@@ -470,34 +470,6 @@ func init() {
         }
       ]
     },
-    "/login": {
-      "get": {
-        "security": [],
-        "tags": [
-          "login"
-        ],
-        "summary": "login through oauth2 server",
-        "responses": {
-          "200": {
-            "description": "login",
-            "schema": {
-              "properties": {
-                "access_token": {
-                  "type": "string",
-                  "format": "string"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/multi_choice/{id}": {
       "get": {
         "tags": [
@@ -571,34 +543,6 @@ func init() {
           "required": true
         }
       ]
-    },
-    "/oidc_callback": {
-      "get": {
-        "security": [],
-        "tags": [
-          "login"
-        ],
-        "summary": "return access_token",
-        "responses": {
-          "200": {
-            "description": "login",
-            "schema": {
-              "properties": {
-                "access_token": {
-                  "type": "string",
-                  "format": "string"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
     },
     "/oidc_info": {
       "get": {
@@ -1560,34 +1504,6 @@ func init() {
         }
       ]
     },
-    "/login": {
-      "get": {
-        "security": [],
-        "tags": [
-          "login"
-        ],
-        "summary": "login through oauth2 server",
-        "responses": {
-          "200": {
-            "description": "login",
-            "schema": {
-              "properties": {
-                "access_token": {
-                  "type": "string",
-                  "format": "string"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/multi_choice/{id}": {
       "get": {
         "tags": [
@@ -1661,34 +1577,6 @@ func init() {
           "required": true
         }
       ]
-    },
-    "/oidc_callback": {
-      "get": {
-        "security": [],
-        "tags": [
-          "login"
-        ],
-        "summary": "return access_token",
-        "responses": {
-          "200": {
-            "description": "login",
-            "schema": {
-              "properties": {
-                "access_token": {
-                  "type": "string",
-                  "format": "string"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "error",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
     },
     "/oidc_info": {
       "get": {

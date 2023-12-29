@@ -80,14 +80,8 @@ func NewHtaAPI(spec *loads.Document) *HtaAPI {
 		EntryGetEntriesIDHandler: entry.GetEntriesIDHandlerFunc(func(params entry.GetEntriesIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation entry.GetEntriesID has not yet been implemented")
 		}),
-		LoginGetLoginHandler: login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
-			return middleware.NotImplemented("operation login.GetLogin has not yet been implemented")
-		}),
 		CategoryGetMultiChoiceIDHandler: category.GetMultiChoiceIDHandlerFunc(func(params category.GetMultiChoiceIDParams, principal *schemas.User) middleware.Responder {
 			return middleware.NotImplemented("operation category.GetMultiChoiceID has not yet been implemented")
-		}),
-		LoginGetOidcCallbackHandler: login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
-			return middleware.NotImplemented("operation login.GetOidcCallback has not yet been implemented")
 		}),
 		LoginGetOidcInfoHandler: login.GetOidcInfoHandlerFunc(func(params login.GetOidcInfoParams) middleware.Responder {
 			return middleware.NotImplemented("operation login.GetOidcInfo has not yet been implemented")
@@ -213,12 +207,8 @@ type HtaAPI struct {
 	EntryGetEntriesHandler entry.GetEntriesHandler
 	// EntryGetEntriesIDHandler sets the operation handler for the get entries ID operation
 	EntryGetEntriesIDHandler entry.GetEntriesIDHandler
-	// LoginGetLoginHandler sets the operation handler for the get login operation
-	LoginGetLoginHandler login.GetLoginHandler
 	// CategoryGetMultiChoiceIDHandler sets the operation handler for the get multi choice ID operation
 	CategoryGetMultiChoiceIDHandler category.GetMultiChoiceIDHandler
-	// LoginGetOidcCallbackHandler sets the operation handler for the get oidc callback operation
-	LoginGetOidcCallbackHandler login.GetOidcCallbackHandler
 	// LoginGetOidcInfoHandler sets the operation handler for the get oidc info operation
 	LoginGetOidcInfoHandler login.GetOidcInfoHandler
 	// CategoryGetSingleChoiceGroupGroupIDSingleChoiceHandler sets the operation handler for the get single choice group group ID single choice operation
@@ -366,14 +356,8 @@ func (o *HtaAPI) Validate() error {
 	if o.EntryGetEntriesIDHandler == nil {
 		unregistered = append(unregistered, "entry.GetEntriesIDHandler")
 	}
-	if o.LoginGetLoginHandler == nil {
-		unregistered = append(unregistered, "login.GetLoginHandler")
-	}
 	if o.CategoryGetMultiChoiceIDHandler == nil {
 		unregistered = append(unregistered, "category.GetMultiChoiceIDHandler")
-	}
-	if o.LoginGetOidcCallbackHandler == nil {
-		unregistered = append(unregistered, "login.GetOidcCallbackHandler")
 	}
 	if o.LoginGetOidcInfoHandler == nil {
 		unregistered = append(unregistered, "login.GetOidcInfoHandler")
@@ -571,15 +555,7 @@ func (o *HtaAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/login"] = login.NewGetLogin(o.context, o.LoginGetLoginHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/multi_choice/{id}"] = category.NewGetMultiChoiceID(o.context, o.CategoryGetMultiChoiceIDHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/oidc_callback"] = login.NewGetOidcCallback(o.context, o.LoginGetOidcCallbackHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

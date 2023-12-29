@@ -116,12 +116,6 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 
 	/////////////////////////////////////////////////////////////////
 	// Login
-	api.LoginGetLoginHandler = login.GetLoginHandlerFunc(func(params login.GetLoginParams) middleware.Responder {
-		return AuthLogin(&auth, params.HTTPRequest)
-	})
-	api.LoginGetOidcCallbackHandler = login.GetOidcCallbackHandlerFunc(func(params login.GetOidcCallbackParams) middleware.Responder {
-		return AuthCallback(&auth, params.HTTPRequest)
-	})
 	api.LoginGetOidcInfoHandler = login.GetOidcInfoHandlerFunc(func(params login.GetOidcInfoParams) middleware.Responder {
 		discoveryUrl := auth.issuer + "/.well-known/openid-configuration"
 		model := models.OidcInfo{

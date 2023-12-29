@@ -10,19 +10,12 @@ package restapi
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
-	"github.com/google/uuid"
-	"github.com/zitadel/oidc/pkg/client/rp"
 	"github.com/zitadel/oidc/pkg/client/rs"
 	"github.com/zitadel/oidc/pkg/oidc"
 	"gorm.io/gorm"
 	"hta_backend_2/schemas"
-	"net/http"
-	"strings"
 	"time"
 )
 
@@ -31,7 +24,6 @@ type Auth struct {
 	clientId         string
 	frontendClientId string
 	oidcRS           rs.ResourceServer
-	oidcRP           rp.RelyingParty
 	db               *gorm.DB
 }
 
@@ -53,45 +45,7 @@ func AuthSetup(db *gorm.DB, issuer string, clientId string, clientSecret string,
 		return auth, err
 	}
 
-	auth.oidcRP, err = rp.NewRelyingPartyOIDC(
-		issuer,
-		clientId,
-		clientSecret,
-		"http://localhost:8080/oidc_callback",
-		strings.Split("openid", " "),
-	)
-	if err != nil {
-		return auth, err
-	}
-
 	return auth, nil
-}
-
-func AuthLogin(auth *Auth, r *http.Request) middleware.Responder {
-	fn := rp.AuthURLHandler(func() string {
-		return uuid.New().String()
-	}, auth.oidcRP, rp.WithPromptURLParam("Welcome to HTA!"))
-	return middleware.ResponderFunc(
-		func(w http.ResponseWriter, pr runtime.Producer) {
-			fn(w, r)
-		})
-}
-
-func AuthCallback(auth *Auth, r *http.Request) middleware.Responder {
-	fn := rp.CodeExchangeHandler(func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens, state string, rp rp.RelyingParty) {
-		fmt.Printf("Received ID Token %s", tokens.IDToken)
-		fmt.Printf("Received Access Token %s", tokens.AccessToken)
-		data, err := json.Marshal(tokens)
-		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		} else {
-			w.Write(data)
-		}
-	}, auth.oidcRP)
-	return middleware.ResponderFunc(
-		func(w http.ResponseWriter, pr runtime.Producer) {
-			fn(w, r)
-		})
 }
 
 func getIntrospect(ctx context.Context, auth *Auth, token string) (oidc.IntrospectionResponse, error) {

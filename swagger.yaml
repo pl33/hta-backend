@@ -179,42 +179,6 @@ definitions:
             description:
                 type: string
 paths:
-    /login:
-        get:
-            summary: login through oauth2 server
-            tags:
-                - login
-            security: [ ]
-            responses:
-                '200':
-                    description: login
-                    schema:
-                        properties:
-                            access_token:
-                                type: string
-                                format: string
-                default:
-                    description: error
-                    schema:
-                        $ref: "#/definitions/error"
-    /oidc_callback:
-        get:
-            summary: return access_token
-            tags:
-                - login
-            security: [ ]
-            responses:
-                '200':
-                    description: login
-                    schema:
-                        properties:
-                            access_token:
-                                type: string
-                                format: string
-                default:
-                    description: error
-                    schema:
-                        $ref: "#/definitions/error"
     /oidc_info:
         get:
             summary: Obtain information about OpenID Connect
