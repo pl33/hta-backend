@@ -171,6 +171,7 @@ func PutHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	principal *schemas.User,
 	fromModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB, model Model) error,
 	modelAuthFunc func(ctx context.Context, db *gorm.DB, principal *schemas.User, schema *Schema) error,
+	replaceAssociationsFunc func(schema *Schema, ctx context.Context, db *gorm.DB) error,
 	toModelFunc func(schema *Schema, ctx context.Context, db *gorm.DB) (Model, error),
 	successFunc func(model *Model) middleware.Responder,
 ) middleware.Responder {
@@ -203,6 +204,12 @@ func PutHandler[Model interface{}, Schema SchemaAuth, N int32 | int64 | uint](
 	if modelAuthFunc != nil {
 		if err := modelAuthFunc(ctx, db, principal, &schema); err != nil {
 			return errorResponder(http.StatusForbidden, err)
+		}
+	}
+
+	if replaceAssociationsFunc != nil {
+		if err := replaceAssociationsFunc(&schema, ctx, db); err != nil {
+			return errorResponder(http.StatusInternalServerError, err)
 		}
 	}
 

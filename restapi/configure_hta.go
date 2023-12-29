@@ -199,6 +199,15 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			principal,
 			FromModelFunc[models.Entry, *schemas.HealthEntry],
 			schemas.ModelAuthHealthEntry,
+			func(schema *schemas.HealthEntry, ctx context.Context, db *gorm.DB) error {
+				if err := db.WithContext(ctx).Model(schema).Association("MultiChoices").Replace(schema.MultiChoices); err != nil {
+					return err
+				}
+				if err := db.WithContext(ctx).Model(schema).Association("SingleChoices").Replace(schema.SingleChoices); err != nil {
+					return err
+				}
+				return nil
+			},
 			ToModelFunc[models.Entry, *schemas.HealthEntry],
 			func(model *models.Entry) middleware.Responder {
 				return entry.NewPutEntriesIDOK().WithPayload(model)
@@ -270,6 +279,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.Category, *schemas.Category],
+			nil,
 			nil,
 			ToModelFunc[models.Category, *schemas.Category],
 			func(model *models.Category) middleware.Responder {
@@ -346,6 +356,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			principal,
 			FromModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
 			nil,
+			nil,
 			ToModelFunc[models.CategoryMultiChoice, *schemas.CategoryMultiChoice],
 			func(model *models.CategoryMultiChoice) middleware.Responder {
 				return category.NewPutMultiChoiceIDOK().WithPayload(model)
@@ -421,6 +432,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			principal,
 			FromModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
 			nil,
+			nil,
 			ToModelFunc[models.CategorySingleChoiceGroup, *schemas.CategorySingleChoiceGroup],
 			func(model *models.CategorySingleChoiceGroup) middleware.Responder {
 				return category.NewPutSingleChoiceGroupIDOK().WithPayload(model)
@@ -495,6 +507,7 @@ func configureAPI(api *operations.HtaAPI) http.Handler {
 			params.ID,
 			principal,
 			FromModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
+			nil,
 			nil,
 			ToModelFunc[models.CategorySingleChoice, *schemas.CategorySingleChoiceItem],
 			func(model *models.CategorySingleChoice) middleware.Responder {
