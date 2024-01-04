@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/models"
+	"github.com/pl33/hta-backend/models"
 )
 
 // PostUserHandlerFunc turns a function with the right signature into a post user handler

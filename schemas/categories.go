@@ -11,8 +11,8 @@ package schemas
 import (
 	"context"
 	"fmt"
+	"github.com/pl33/hta-backend/models"
 	"gorm.io/gorm"
-	"hta_backend_2/models"
 )
 
 type Category struct {

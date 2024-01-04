@@ -12,9 +12,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/pl33/hta-backend/models"
+	"github.com/pl33/hta-backend/schemas"
 	"gorm.io/gorm"
-	"hta_backend_2/models"
-	"hta_backend_2/schemas"
 	"net/http"
 )
 

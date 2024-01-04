@@ -19,10 +19,10 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"hta_backend_2/restapi/operations/category"
-	"hta_backend_2/restapi/operations/entry"
-	"hta_backend_2/restapi/operations/login"
-	"hta_backend_2/schemas"
+	"github.com/pl33/hta-backend/restapi/operations/category"
+	"github.com/pl33/hta-backend/restapi/operations/entry"
+	"github.com/pl33/hta-backend/restapi/operations/login"
+	"github.com/pl33/hta-backend/schemas"
 )
 
 // NewHtaAPI creates a new Hta instance

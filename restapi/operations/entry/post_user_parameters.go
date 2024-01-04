@@ -13,7 +13,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/validate"
 
-	"hta_backend_2/models"
+	"github.com/pl33/hta-backend/models"
 )
 
 // NewPostUserParams creates a new PostUserParams object

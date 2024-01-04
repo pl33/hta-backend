@@ -1,4 +1,4 @@
-module hta_backend_2
+module github.com/pl33/hta-backend
 
 go 1.21
 

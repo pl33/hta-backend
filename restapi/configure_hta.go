@@ -17,16 +17,16 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/pl33/hta-backend/schemas"
 	"github.com/rs/cors"
 	"gorm.io/gorm"
-	"hta_backend_2/schemas"
 	"net/http"
 
-	"hta_backend_2/models"
-	"hta_backend_2/restapi/operations"
-	"hta_backend_2/restapi/operations/category"
-	"hta_backend_2/restapi/operations/entry"
-	"hta_backend_2/restapi/operations/login"
+	"github.com/pl33/hta-backend/models"
+	"github.com/pl33/hta-backend/restapi/operations"
+	"github.com/pl33/hta-backend/restapi/operations/category"
+	"github.com/pl33/hta-backend/restapi/operations/entry"
+	"github.com/pl33/hta-backend/restapi/operations/login"
 )
 
 //go:generate swagger generate server --target ../../hta_backend_2 --name Hta --spec ../swagger.yaml --principal schemas.User

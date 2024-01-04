@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/schemas"
+	"github.com/pl33/hta-backend/schemas"
 )
 
 // PutCategoryIDHandlerFunc turns a function with the right signature into a put category ID handler

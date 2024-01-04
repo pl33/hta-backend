@@ -12,10 +12,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/pl33/hta-backend/schemas"
 	"github.com/zitadel/oidc/pkg/client/rs"
 	"github.com/zitadel/oidc/pkg/oidc"
 	"gorm.io/gorm"
-	"hta_backend_2/schemas"
 	"time"
 )
 

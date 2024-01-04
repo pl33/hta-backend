@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"hta_backend_2/models"
+	"github.com/pl33/hta-backend/models"
 )
 
 // GetOidcCallbackOKCode is the HTTP code returned for type GetOidcCallbackOK

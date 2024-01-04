@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"hta_backend_2/schemas"
+	"github.com/pl33/hta-backend/schemas"
 )
 
 // PostCategoryCategoryIDSingleChoiceGroupHandlerFunc turns a function with the right signature into a post category category ID single choice group handler

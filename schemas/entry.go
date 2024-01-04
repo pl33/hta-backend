@@ -12,8 +12,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-openapi/strfmt"
+	"github.com/pl33/hta-backend/models"
 	"gorm.io/gorm"
-	"hta_backend_2/models"
 	"time"
 )
 

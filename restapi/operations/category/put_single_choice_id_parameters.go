@@ -15,7 +15,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"hta_backend_2/models"
+	"github.com/pl33/hta-backend/models"
 )
 
 // NewPutSingleChoiceIDParams creates a new PutSingleChoiceIDParams object
